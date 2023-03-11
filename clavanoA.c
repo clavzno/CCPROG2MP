@@ -11,6 +11,7 @@ Notes: (1) won't run in Repl.it console, (2) vsCode Terminal won't show flashing
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h> //Required for the display_loading function, alternate is <windows.h>
+#include <string.h>
 
 /* Define directives for cosmetic purposes in the program such as the 
 main menu and headers when under a certain module. */ 
@@ -163,7 +164,7 @@ menu_main()
 			menu_accessibilty();
 			break;
 		case 4:
-			exit(0);
+			exit(0); //NOTE: EXIT IS NOT ALLOWED
 			break;
 		default:
 			printf("Invalid input. Please try again.\n");
@@ -177,6 +178,51 @@ menu_main()
 int
 main()
 {
+	struct user[n]
+	{
+		int userID, contact;
+		char password[11];
+		char name[21];
+		char address[31];
+		char sex[11];
+		char dose1_date[11];
+		char dose1_type[11];
+		char dose1_loc[11];
+		// Optional
+		/* note: prompt user if they have more than 1 dose, if 0, set all to N/A */
+		char dose2_date[11];
+		char dose2_type[11];
+		char dose2_loc[11];
+		char dose3_date[11];
+		char dose3_type[11];
+		char dose3_loc[11];
+	};
+
+	/* int userID, contact;
+		int *userIDptr = &userID;
+		int *contactptr = &contact;
+	char password[11];
+		char *passwordptr;
+	char name[21];
+		char *namePtr = &name;
+	char address[31];
+		char *addressptr = &address;
+	char sex[11];
+		char *sexptr = &sex;
+	char dose1_date[11];
+		char *dose1_dateptr = &dose1_date;
+	char dose1_type[11];
+		char *dose1_typeptr = &dose1_type;
+	char dose1_loc[11];
+		char *dose1_locptr = &dose1_loc;
+	char dose2_date[11];
+	char dose2_type[11];
+	char dose2_loc[11];
+	char dose3_date[11];
+	char dose3_type[11];
+	char dose3_loc[11]; */
+
+	// note use malloc to add new user space?
 	display_loading();
 	menu_main();
 	return 0;
