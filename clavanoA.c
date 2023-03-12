@@ -21,7 +21,7 @@ main menu and headers when under a certain module. */
 #define ANSI_RED "\e[0;31m"
 #define ANSI_BLUE "\e[0;34m"
 #define ANSI_WHITE "\e[0;1m"
-#define ANSI_OFF "\e[m"
+#define ANSI_OFF "\e[m" //removes ANSI code and restores to default text
 // COLOR_OFF to end command; 1 = bold, 5 = slow blink, Xm = color
 
 /* Extra: Loading Screen Simulation */
