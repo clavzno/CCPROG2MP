@@ -164,11 +164,11 @@ menu_main()
 			menu_accessibilty();
 			break;
 		case 4:
-			exit(0); //NOTE: EXIT IS NOT ALLOWED
+			//exit(0); //NOTE: EXIT IS NOT ALLOWED
+			return 0;
 			break;
 		default:
 			printf("Invalid input. Please try again.\n");
-			menu_main();
 	}
 }
 
