@@ -15,13 +15,14 @@ Notes: (1) won't run in Repl.it console, (2) vsCode Terminal won't show flashing
 
 /* Define directives for cosmetic purposes in the program such as the 
 main menu and headers when under a certain module. */ 
-#define ANSI_FLASH_RED "\e[0;5;31m"
-#define ANSI_FLASH_BLUE "\e[0;5;34m"
-#define ANSI_FLASH_WHITE "\e[0;5;1m"
-#define ANSI_RED "\e[0;31m"
-#define ANSI_BLUE "\e[0;34m"
-#define ANSI_WHITE "\e[0;1m"
-#define ANSI_OFF "\e[m" //removes ANSI code and restores to default text
+// \e for Escape character, [ for ANSI code, m for end of ANSI code
+#define ANSI_FLASH_RED "Esc[0;5;31m"
+#define ANSI_FLASH_BLUE "Esc[0;5;34m"
+#define ANSI_FLASH_WHITE "Esc[0;5;1m"
+#define ANSI_RED "Esc[0;31m"
+#define ANSI_BLUE "Esc[0;34m"
+#define ANSI_WHITE "Esc[0;1m"
+#define ANSI_OFF "Esc[m" //removes ANSI code and restores to default text
 // COLOR_OFF to end command; 1 = bold, 5 = slow blink, Xm = color
 
 /* Extra: Loading Screen Simulation */
