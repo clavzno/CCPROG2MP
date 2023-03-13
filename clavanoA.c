@@ -15,15 +15,15 @@ Notes: (1) won't run in Repl.it console, (2) vsCode Terminal won't show flashing
 
 /* Define directives for cosmetic purposes in the program such as the 
 main menu and headers when under a certain module. */ 
-// \e for Escape character, [ for ANSI code, m for end of ANSI code
-#define ANSI_FLASH_RED "Esc[0;5;31m"
-#define ANSI_FLASH_BLUE "Esc[0;5;34m"
-#define ANSI_FLASH_WHITE "Esc[0;5;1m"
-#define ANSI_RED "Esc[0;31m"
-#define ANSI_BLUE "Esc[0;34m"
-#define ANSI_WHITE "Esc[0;1m"
-#define ANSI_OFF "Esc[m" //removes ANSI code and restores to default text
-// COLOR_OFF to end command; 1 = bold, 5 = slow blink, Xm = color
+// \e == (Esc)ape code, [ for ANSI code, m for end of ANSI code
+#define ANSI_FLASH_RED "\e[0;6;31m" 
+#define ANSI_FLASH_BLUE "\e[0;6;34m"
+#define ANSI_FLASH_WHITE "\e[0;6;1m"
+#define ANSI_RED "\e[0;31m"
+#define ANSI_BLUE "\e[0;34m"
+#define ANSI_WHITE "\e[0;1m"
+#define ANSI_OFF "\e[0m" //removes ANSI code and restores to default text
+// COLOR_OFF to end command; 1 = bold, 5 = slow blink, X = color, m = end of ANSI code
 
 /* Extra: Loading Screen Simulation */
 /* requires <unistd.h>/<windows.h> for sleep */
@@ -32,13 +32,13 @@ display_loading()
 {
 	int i, j, a;
 
-	printf(ANSI_WHITE "Loading" ANSI_OFF);
+	printf("Loading");
 
 	for (i = 0; i <= 6; i++)
 	{
 		for (j = 0; sleep(1); j++) //sleep delays the printing of "." for 1sec
 			j = a;
-		printf(ANSI_WHITE "." ANSI_OFF);
+		printf(".");
 	}
 	printf("\n");
 
