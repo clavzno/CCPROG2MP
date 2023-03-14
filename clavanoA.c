@@ -11,7 +11,6 @@ Notes: (1) won't run in Repl.it console, (2) vsCode Terminal won't show flashing
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h> //Required for the display_loading function, alternate is <windows.h>
-#include <string.h>
 
 /* Define directives for cosmetic purposes in the program such as the 
 main menu and headers when under a certain module. */ 
@@ -24,6 +23,9 @@ main menu and headers when under a certain module. */
 #define ANSI_WHITE "\e[0;1m"
 #define ANSI_OFF "\e[0m" //removes ANSI code and restores to default text
 // COLOR_OFF to end command; 1 = bold, 5 = slow blink, X = color, m = end of ANSI code
+
+/* Define directives for max users since dynamic memory allocation is hard */
+#define MAX_USERS 100
 
 /* Extra: Loading Screen Simulation */
 /* requires <unistd.h>/<windows.h> for sleep */
@@ -50,7 +52,7 @@ display_loading()
 
 /* Called when "Vaccination Registration" option is chosen by user */
 void
-menu_vaxregistration()
+menu_vaxregistration(struct User Profiles)
 {
 	printf("You are in Vaccination Registrsation and Data Management.\n");
 }
@@ -58,19 +60,19 @@ menu_vaxregistration()
 programmer is aware of the amount of pointer variables to be passed within these
 subfunctions. */
 void
-vaxreg_useregistration() {
+vaxreg_useregistration(struct User Profiles) {
 	printf("You are in User Registration.\n");
 }
 void
-vaxreg_vaxappointment() {
+vaxreg_vaxappointment(struct User Profiles) {
 	printf("You are in Vaccination Appointment.\n");
 }
 void
-vaxreg_faqs() {
+vaxreg_faqs(struct User Profiles) {
 	printf("You are in FAQs.\n");
 }
 void
-vaxreg_exit() {
+vaxreg_exit(struct User Profiles) {
 	system("cls");
 	menu_main();
 }
@@ -81,15 +83,15 @@ vaxreg_exit() {
 user and appointment files are saved, preserved, and can be edited. Every chatbot
 interaction including questions and answers are saved and preserved. */
 void
-generate_userfile() {
+generate_userfile(struct User Profiles) {
 	printf("Added to user file.\n");
 }
 void
-generate_appointmentfile() {
+generate_appointmentfile(struct User Profiles) {
 	printf("Added to appointment file.\n");
 }
 void
-generate_chatfile() {
+generate_chatfile(struct User Profiles) {
 	printf("Conversation has been added to chat file.");
 }
 
@@ -98,7 +100,7 @@ generate_chatfile() {
 
 /* Called when "Manage Data" option is chosen by the user */
 void
-menu_datamanagement()
+menu_datamanagement(struct User Profiles)
 {
 	printf("You are in Data Management.\n");
 }
@@ -134,7 +136,7 @@ void acc_bgcolor() {} //allows user to choose between darkmode and lightmode for
 /* Displays main menu offering 2 options: Vaccination Registration Menu
 ("Vaccination Registration") and Data Management Menu ("Manage Data") */
 int
-menu_main()
+menu_main(struct User Profiles)
 {
 	int choice;
 	printf("**************************\n");
@@ -156,13 +158,13 @@ menu_main()
 	switch (choice)
 	{
 		case 1:
-			menu_vaxregistration();
+			menu_vaxregistration(Profiles);
 			break;
 		case 2:
-			menu_datamanagement();
+			menu_datamanagement(Profiles);
 			break;
 		case 3:
-			menu_accessibilty();
+			menu_accessibilty(Profiles);
 			break;
 		case 4:
 			//exit(0); //NOTE: EXIT IS NOT ALLOWED
@@ -179,7 +181,7 @@ menu_main()
 int
 main()
 {
-	struct user[n]
+	struct user
 	{
 		int userID, contact;
 		char password[11];
@@ -198,6 +200,8 @@ main()
 		char dose3_type[11];
 		char dose3_loc[11];
 	};
+
+	struct user Profiles[MAX_USERS];
 
 	/* int userID, contact;
 		int *userIDptr = &userID;
@@ -225,6 +229,6 @@ main()
 
 	// note use malloc to add new user space?
 	display_loading();
-	menu_main();
+	menu_main(Profiles);
 	return 0;
 }
