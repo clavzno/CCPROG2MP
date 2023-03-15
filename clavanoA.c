@@ -136,7 +136,7 @@ void acc_bgcolor() {} //allows user to choose between darkmode and lightmode for
 /* Displays main menu offering 2 options: Vaccination Registration Menu
 ("Vaccination Registration") and Data Management Menu ("Manage Data") */
 int
-menu_main(struct User Profiles)
+menu_main(struct User *Profiles)
 {
 	int choice;
 	printf("**************************\n");
@@ -229,6 +229,6 @@ main()
 
 	// note use malloc to add new user space?
 	display_loading();
-	menu_main(Profiles);
+	menu_main(&Profiles);
 	return 0;
 }
