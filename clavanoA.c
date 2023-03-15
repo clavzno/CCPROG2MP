@@ -35,7 +35,7 @@ display_loading()
 	int i, j, a;
 
 	printf("Loading");
-
+ 
 	for (i = 0; i <= 6; i++)
 	{
 		for (j = 0; sleep(1); j++) //sleep delays the printing of "." for 1sec
