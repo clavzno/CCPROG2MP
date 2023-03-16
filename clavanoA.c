@@ -76,45 +76,6 @@ void display_loading()
 
 	system("cls"); // clears the screen
 }
-
-/* Called when "Vaccination Registration" option is chosen by user */
-void menu_vaxregistration(struct user *Profiles, int *num_usersptr);
-{
-	int choice;
-	printf("**************************\n");
-	printf("\n");
-	printf(ANSI_YELLOW "Vaccination Registration\n" ANSI_OFF);
-	printf("\n");
-	printf("Select Option:\n");
-	printf("[1] User Registration\n");
-	printf("[2] Create Vaccine Appointment\n");
-	printf("[3] FAQs\n");
-	printf("[4] Exit\n");
-	printf("\n");
-	printf("**************************\n");
-	printf("\n");
-	printf("Enter choice: ");
-	scanf("%d", &choice);
-	printf("\n");
-
-	switch (choice)
-	{
-	case 1: // user registration
-		vaxreg_useregistration(Profiles, num_usersptr);
-		break;
-	case 2: // vaccine appointment
-		vaxreg_vaxappointment(Profiles, num_usersptr);
-		break;
-	case 3: // FAQs
-		vaxreg_faqs(Profiles, num_usersptr);
-		break;
-	case 4: // exit
-		vaxreg_exit(Profiles, num_usersptr);
-		break;
-	default:
-		printf("Invalid input. Please try again.\n");
-	}
-}
 /* Below are subfunctions/menus to be called to preserve code readability. The
 programmer is aware of the amount of pointer variables to be passed within these
 subfunctions. */
@@ -203,6 +164,45 @@ int vaxreg_exit(struct user *Profiles, int *num_usersptr)
 	return 0;
 }
 
+/* Called when "Vaccination Registration" option is chosen by user */
+void menu_vaxregistration(struct user *Profiles, int *num_usersptr)
+{
+	int choice;
+	printf("**************************\n");
+	printf("\n");
+	printf(ANSI_YELLOW "Vaccination Registration\n" ANSI_OFF);
+	printf("\n");
+	printf("Select Option:\n");
+	printf("[1] User Registration\n");
+	printf("[2] Create Vaccine Appointment\n");
+	printf("[3] FAQs\n");
+	printf("[4] Exit\n");
+	printf("\n");
+	printf("**************************\n");
+	printf("\n");
+	printf("Enter choice: ");
+	scanf("%d", &choice);
+	printf("\n");
+
+	switch (choice)
+	{
+	case 1: // user registration
+		vaxreg_useregistration(Profiles, num_usersptr);
+		break;
+	case 2: // vaccine appointment
+		vaxreg_vaxappointment(Profiles, num_usersptr);
+		break;
+	case 3: // FAQs
+		vaxreg_faqs(Profiles, num_usersptr);
+		break;
+	case 4: // exit
+		vaxreg_exit(Profiles, num_usersptr);
+		break;
+	default:
+		printf("Invalid input. Please try again.\n");
+	}
+}
+
 /* During Vaccination Registration and Data Management, the values in selected
 user and appointment files are saved, preserved, and can be edited. Every chatbot
 interaction including questions and answers are saved and preserved. */
@@ -245,7 +245,7 @@ void acc_bgcolor() {}		 // allows user to choose between darkmode and lightmode 
 
 /* Displays main menu offering 2 options: Vaccination Registration Menu
 ("Vaccination Registration") and Data Management Menu ("Manage Data") */
-int menu_main(struct user *Profiles, int *num_usersptr, int *settingsptr)
+int menu_main(struct user *Profiles, int *num_usersptr, struct settings *setptr)
 {
 	int choice;
 	printf("**************************\n");
@@ -273,7 +273,7 @@ int menu_main(struct user *Profiles, int *num_usersptr, int *settingsptr)
 		menu_datamanagement(Profiles, num_usersptr);
 		break;
 	case 3: // accessibility
-		menu_accessibilty(settingsptr);
+		menu_accessibilty(setptr);
 		break;
 	case 4: // exit	
 		break;
@@ -282,3 +282,20 @@ int menu_main(struct user *Profiles, int *num_usersptr, int *settingsptr)
 	}
 }
 
+/***********************************************************************/
+/* Driver code */
+int main()
+{
+	struct user Profiles[MAX_USERS];
+	struct user *ptr = Profiles; // pointer to Profiles to access values
+	struct settings Settings;
+	struct settings *setptr = &Settings; // pointer to Settings to access values
+
+	int num_users = 0; // we know the max size but we don't know the number of users
+	int *num_usersptr = &num_users;
+
+	// note use malloc to add new user space?
+	display_loading();
+	menu_main(ptr, num_usersptr, setptr);
+	return 0;
+}
