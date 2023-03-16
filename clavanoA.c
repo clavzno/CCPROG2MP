@@ -164,8 +164,7 @@ void vaxreg_useregistration(struct user *Profiles, int *num_usersptr)
 
 void vaxreg_vaxappointment(struct user *Profiles, int *num_usersptr)
 {
-	printf("You are in Vaccina
-	tion Appointment.\n");
+	printf("You are in Vaccination Appointment.\n");
 }
 void vaxreg_faqs(struct user *Profiles, int *num_usersptr)
 {
