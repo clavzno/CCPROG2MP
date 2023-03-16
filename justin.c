@@ -5,8 +5,8 @@ CCPROG2 Machine Project - Vaccination Registration Application with Chatbot
 Description: // WIP //
 
 Programmed by: Justin Patrick M. De Grano - S18B
-Last modified: 3-16-2022
-Version: V0.1D
+Last modified: 2-23-2022
+Version: V0.2A
 
 ***************************************************************************/
 
@@ -22,7 +22,7 @@ typedef char stg30[31];
 
 void displayLine() { printf("\n------------------------------------------\n"); }
 
-void // Printed introductory menu
+void 
 displayIntro() {
 
   displayLine();
@@ -40,10 +40,10 @@ displayIntro() {
   printf ("With no further delay, you may now proceed forward in the program.\n");
 
   displayLine();
-}
+} // Printed introductory menu
 
 
-void // Printed display menu
+void
 displayMenu() {
 
   displayLine();
@@ -59,9 +59,9 @@ displayMenu() {
   printf("(X) Exit the Program\n");
 
   displayLine();
-}
+}  // Printed display menu
 
-void // Printed display menu (option A - vaxreg)
+void 
 displayMenu_A() {
 	
   displayLine();
@@ -78,9 +78,9 @@ displayMenu_A() {
   printf("(X) Go Back to the Primary Menu\n");
 
   displayLine();
-}
+} // Printed display menu (option A - vaxreg)
 
-void // Printed display menu (option B - datamanag)
+void 
 displayMenu_B() {
 
   displayLine();
@@ -99,11 +99,42 @@ displayMenu_B() {
   printf("(X) Exit the Program\n");
 
   displayLine();
-}
+} // Printed display menu (option B - datamanag)
 
 /* These are the functions to be made for the menu options,
    arranged from top-to-bottom - the same way it was ordered
    on function displayMenu. */
+   
+/* The main menu that the user will be at initially. */
+
+char menuMain () {
+	
+	displayMenu();
+	
+	char cOpt;
+    
+    printf("\nEnter Choice: ");
+    scanf(" %c", &cOpt);
+    
+    switch (cOpt)
+	{
+        case 'A':
+        case 'a':
+            menuReg();
+        	break;
+        case 'B':
+        case 'b':
+        	menuMng();
+        	break;
+        case 'X':
+        case 'x':
+        	break;
+        default:
+        	printf("\nInvalid input, please only use what's indicated.\n");
+    }
+    return cOpt;
+	
+};
 
 /* If the user selects vaccine registration, they would be forwarded
    to choose choices in between.
@@ -119,7 +150,38 @@ displayMenu_B() {
 
    back to menu - heads the user straight to the main menu */
 
-void menuReg() {}
+void menuReg() {
+
+	displayMenu_A();
+	
+	char cOpt;
+    
+    printf("\nEnter Choice: ");
+    scanf(" %c", &cOpt);
+    
+    switch (cOpt)
+	{
+        case 'A':
+        case 'a':
+            menuReg_User ();
+        	break;
+        case 'B':
+        case 'b':
+        	menuReg_Vapp ();
+        	break;
+        case 'C':
+    	case 'c':
+        	menuReg_Chat ();
+        	break;
+        case 'X':
+        case 'x':
+        	menuMain ();
+        	break;
+        default:
+        	printf("\nInvalid input, please only use what's indicated.\n");
+    }
+    return cOpt;
+}
 
 void menuReg_User() {}
 
@@ -143,7 +205,47 @@ void genChat() {}
    their data (both their registration, vax appointment & chat logs)
    as necessary. It also includes an export & import data function as well.*/
 
-void menuMng() {}
+void menuMng() {
+
+	displayMenu_B();
+	
+	char cOpt;
+    
+    printf("\nEnter Choice: ");
+    scanf(" %c", &cOpt);
+    
+    switch (cOpt)
+	{
+        case 'A':
+        case 'a':
+            menuMng_User ();
+        	break;
+        case 'B':
+        case 'b':
+        	menuMng_Vapp ();
+        	break;
+        case 'C':
+    	case 'c':
+        	menuMng_Chat ();
+        	break;
+        case 'D':
+        case 'd':
+        	menuMng_Export ();
+        	break;
+        case 'E':
+        case 'e':
+        	menuMng_Import ();
+        	break;
+        case 'X':
+        case 'x':
+        	menuMng_Exit ();
+        	break;
+        default:
+        	printf("\nInvalid input, please only use what's indicated.\n");
+    }
+    return cOpt;
+
+}
 
 void menuMng_User() {}
 
@@ -157,69 +259,18 @@ void menuMng_Import() {}
 
 void menuMng_Exit() {}
 
-/* Function for choosing options and validation check. */
-
-int menuOpt_Check() (char cOpt) {
-    switch (cOpt) {
-        case 'A':
-        case 'a':
-        case 'B':
-        case 'b':
-        case 'C':
-        case 'c':
-        case 'D':
-        case 'd':
-        case 'E':
-        case 'e':
-        case 'F':
-        case 'f':
-        case 'G':
-        case 'g':
-        case 'X':
-        case 'x':
-            return 1;
-        default:
-            return 0;
-    }
-}
-
-char menuOpt() 
-{
-    char cOpt;
-    int isValid = 0;
-	    
-    while (!isValid) {
-        printf("\nEnter Choice: ");
-        scanf(" %c", &cOpt);
-        isValid = menuOpt_Check(cOpt);
-        if (!isValid) {
-            printf("\nInvalid input, please only use what's indicated.\n");
-        }
-    }
-    return cOpt;
-}
-
 /* Here lies the function main. */
 
 int main() {
 	
   /* variable declaration */
-  
-  char  
-  
+   
   /* program introduction */
 
-  displayIntro();
-  
-  do {
-  	
-  displayMenu();
-	
-  do {
-  
-  } while (cOpt != 'X' && cOpt != 'x') //primary menu
+  displayIntro ();
   
   /* main project menu output */
+  
   
   return 0;
 }
