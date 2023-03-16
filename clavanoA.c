@@ -83,36 +83,47 @@ void vaxreg_useregistration(struct user *Profiles, int *num_usersptr)
 {
 	int more_than_one_dose;
 	int more_than_two_doses;
+	char firstname[11];
+	char lastname[11];
 	printf("You are in User Registration.\n");
 
-	while (*num_usersptr < MAX_USERS)
+	if (*num_usersptr < MAX_USERS)
 	{
 		// prompt user for input and store it in the struct
-		printf("Enter user data:\n");
-		printf("userID: ");
+		printf(ANSI_BLUE "Enter user data:\n" ANSI_OFF);
+		printf("Enter userID: ");
 		scanf("%d", &Profiles->userID);
-		printf("contact: ");
+		printf("Enter contact number: ");
 		scanf("%d", &Profiles->contact);
-		printf("password: ");
+		printf("Enter password: ");
 		scanf("%s", Profiles->password);
-		printf("name: ");
-		scanf("%s", Profiles->name);
-		printf("address: ");
+		//Entering full name
+		printf("Enter your first name: ");
+		scanf("%s", firstname);
+		printf("Enter your last name: ");
+		scanf("%s", lastname);
+		strcat(Profiles->name, firstname);
+		strcat(Profiles->name, " ");
+		strcat(Profiles->name, lastname);
+		//Entering address
+		printf("Enter address: ");
 		scanf("%s", Profiles->address);
-		printf("sex: ");
+		printf("Enter sex [M/F]: ");
 		scanf("%s", Profiles->sex);
-		printf("dose1_date: ");
+		printf("Enter date of your first dose: ");
+		printf(ANSI_BLUE "Date format: 2023-03-16" ANSI_OFF);
 		scanf("%s", Profiles->dose1_date);
-		printf("dose1_type: ");
+		printf("Enter vaccine name: ");
 		scanf("%s", Profiles->dose1_type);
-		printf("dose1_loc: ");
+		printf("Enter location of first dose: ");
 		scanf("%s", Profiles->dose1_loc);
-		printf("Do you have more than 1 dose? (0/1): ");
+		printf("Do you have more than 1 dose? (1 for yes, 0 for no): ");
 		scanf("%d", &more_than_one_dose);
 
 		if (more_than_one_dose == 1)
 		{
 			printf("dose2_date: ");
+			printf(ANSI_BLUE "Date format: 2023-03-16" ANSI_OFF);
 			scanf("%s", Profiles->dose2_date);
 			printf("dose2_type: ");
 			scanf("%s", Profiles->dose2_type);
@@ -124,6 +135,7 @@ void vaxreg_useregistration(struct user *Profiles, int *num_usersptr)
 			if (more_than_two_doses == 1)
 			{
 				printf("dose3_date: ");
+				printf(ANSI_BLUE "Date format: 2023-03-16" ANSI_OFF);
 				scanf("%s", Profiles->dose3_date);
 				printf("dose3_type: ");
 				scanf("%s", Profiles->dose3_type);
@@ -149,8 +161,8 @@ void vaxreg_useregistration(struct user *Profiles, int *num_usersptr)
 			strcpy(Profiles->dose3_loc, "N/A");
 		}
 
-		if (strcmp(Profiles->userID || Profiles->contact || 
-		Profiles->password || Profiles->name || Profiles->address || Profiles->sex || Profiles->dose1_date || Profiles->dose1_type || Profiles->dose1_loc, "exit") == 0)
+		if (Profiles->userID || Profiles->contact || 
+		Profiles->password || Profiles->name || Profiles->address || Profiles->sex || Profiles->dose1_date || Profiles->dose1_type || Profiles->dose1_loc == "exit" || "Exit")
 		{
 			printf(ANSI_FLASH_RED "User profile incomplete. Please try again.\n" ANSI_OFF);
 			(*num_usersptr)--;
@@ -304,7 +316,7 @@ int main()
 	struct settings *setptr = &Settings; // pointer to Settings to access values
 
 	int num_users = 0; // we know the max size but we don't know the number of users
-	int *num_usersptr = &num_users;
+	int *num_usersptr = &num_users; // pointer to num_users to access value of users thus far
 
 	// note use malloc to add new user space?
 	display_loading();
