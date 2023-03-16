@@ -172,7 +172,7 @@ void vaxreg_useregistration(struct user *Profiles, int *num_usersptr)
 			else
 			{
 				// set dose3 fields to "N/A"
-				strcpy(Profiles->dose3_date, "N/A");
+				strcpy(Profiles.dose3_date, "N/A");
 				strcpy(Profiles->dose3_type, "N/A");
 				strcpy(Profiles->dose3_loc, "N/A");
 			}
