@@ -21,9 +21,9 @@ main menu and headers when under a certain module. */
 #define ANSI_RED "\e[0;31m"
 #define ANSI_BLUE "\e[0;34m"
 #define ANSI_WHITE "\e[0;1m"
-#define ANSI_YELLOW "\e[0;93m]" // menu 1: vaccination registration
-#define ANSI_GREEN "\e[0;92m]"	// menu 2: data management
-#define ANSI_CYAN "\e[0;96m]"	// menu 3: settings
+#define ANSI_YELLOW "\e[0;93m" // menu 1: vaccination registration
+#define ANSI_GREEN "\e[0;92m"	// menu 2: data management
+#define ANSI_CYAN "\e[0;96m"	// menu 3: settings
 #define ANSI_OFF "\e[0m"		// removes ANSI code and restores to default text
 // COLOR_OFF to end command; 1 = bold, 5 = slow blink, X = color, m = end of ANSI code
 
