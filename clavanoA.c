@@ -148,11 +148,24 @@ void vaxreg_useregistration(struct user *Profiles, int *num_usersptr)
 			strcpy(Profiles->dose3_type, "N/A");
 			strcpy(Profiles->dose3_loc, "N/A");
 		}
+
+		if (strcmp(Profiles->userID || Profiles->contact || 
+		Profiles->password || Profiles->name || Profiles->address || Profiles->sex || Profiles->dose1_date || Profiles->dose1_type || Profiles->dose1_loc, "exit") == 0)
+		{
+			printf(ANSI_FLASH_RED "User profile incomplete. Please try again.\n" ANSI_OFF);
+			(*num_usersptr)--;
+			printf("Number of users %d", *num_usersptr);
+		}
 	}
+
+	// increment the number of users
+	(*num_usersptr)++;
 }
+
 void vaxreg_vaxappointment(struct user *Profiles, int *num_usersptr)
 {
-	printf("You are in Vaccination Appointment.\n");
+	printf("You are in Vaccina
+	tion Appointment.\n");
 }
 void vaxreg_faqs(struct user *Profiles, int *num_usersptr)
 {
