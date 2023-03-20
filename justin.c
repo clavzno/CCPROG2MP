@@ -15,7 +15,7 @@ Version: V0.2A
 #include <stdio.h>
 #include <string.h>
 
-#define MAX_USERS 64
+#define MAX_USERS 100
 
 typedef char stg10[11];
 typedef char stg20[21];
@@ -152,7 +152,7 @@ struct userStats
 
    back to menu - heads the user straight to the main menu */
 
-void menuReg_User(struct userStats uProf[], int userAmount) {
+void menuReg_User(struct userStats uProf, int userAmount) {
 	
 	int tempDoseMult = 0;
 	int tempUID = userAmount; //refers to the new registered user to be made
@@ -249,7 +249,7 @@ void menuReg_Chat() {}
 
 void menuReg_Exit() {}
 
-char menuReg() {
+char menuReg(struct userStats uProf, int userAmount) {
 
 	displayMenu_A();
 	
@@ -262,7 +262,7 @@ char menuReg() {
 	{
         case 'A':
         case 'a':
-            menuReg_User ();
+            menuReg_User (uProf, userAmount);
         	break;
         case 'B':
         case 'b':
@@ -354,7 +354,7 @@ char menuMng() {
 
 /* The main menu that the user will be at initially. */
 
-char menuMain () {
+char menuMain (struct userStats uProf, int userAmount) {
 	
 	displayMenu();
 	
@@ -367,7 +367,7 @@ char menuMain () {
 	{
         case 'A':
         case 'a':
-            menuReg();
+            menuReg(uProf, userAmount);
         	break;
         case 'B':
         case 'b':
@@ -398,7 +398,7 @@ int main() {
   
   /* main project menu output */
   
-  menuMain ();
+  menuMain (uProf, userAmount);
   
   return 0;
 }
