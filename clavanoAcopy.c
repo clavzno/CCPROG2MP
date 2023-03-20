@@ -18,8 +18,8 @@ main menu and headers when under a certain module. */
 #define ANSI_FLASH_RED "\e[0;6;31m"
 #define ANSI_FLASH_BLUE "\e[0;6;34m"
 #define ANSI_FLASH_WHITE "\e[0;6;1m"
-#define ANSI_RED "\e[0;31m"
-#define ANSI_BLUE "\e[0;34m"
+#define ANSI_RED "\e[0;31m" // FOR ERRORS
+#define ANSI_BLUE "\e[0;34m" // FOR TIPS
 #define ANSI_WHITE "\e[0;1m"
 #define ANSI_YELLOW "\e[0;93m" // menu 1: vaccination registration
 #define ANSI_GREEN "\e[0;92m"  // menu 2: data management
