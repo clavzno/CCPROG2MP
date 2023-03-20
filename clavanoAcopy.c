@@ -132,7 +132,7 @@ void vaxreg_useregistration(struct user *Profiles, int *num_usersptr)
      	    printf("Add new user? (1 for yes, 0 for no):");
             scanf("%d", &addnewuser);
 
-            if (addnewuser != 0) // if add new user prompt is true, begin looking for empty profiles
+            while (addnewuser != 0) // if add new user prompt is true, begin looking for empty profiles
             {
                 emptyprofile =  vaxreg_userreg_checkifempty(Profiles, num_usersptr);
 
