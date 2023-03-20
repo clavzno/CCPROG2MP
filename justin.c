@@ -152,7 +152,7 @@ struct userStats
 
    back to menu - heads the user straight to the main menu */
 
-void menuReg_User(struct userStats uProf, int userAmount) {
+void menuReg_User(struct userStats *uProf, int userAmount) {
 	
 	int tempDoseMult = 0;
 	int tempUID = userAmount; //refers to the new registered user to be made
@@ -255,6 +255,7 @@ char menuReg(struct userStats uProf, int userAmount) {
 	displayMenu_A();
 	
 	char cOpt;
+    struct userStats *uProfptr = &uProf;
     
     printf("\nEnter Choice: ");
     scanf(" %c", &cOpt);
@@ -263,7 +264,7 @@ char menuReg(struct userStats uProf, int userAmount) {
 	{
         case 'A':
         case 'a':
-            menuReg_User (uProf, userAmount);
+            menuReg_User (uProfptr, userAmount);
         	break;
         case 'B':
         case 'b':
@@ -399,7 +400,7 @@ int main() {
   
   /* main project menu output */
   
-  menuMain (uProf, userAmount);
+  menuMain (uProf[MAX_USERS], userAmount);
   
   return 0;
 }
