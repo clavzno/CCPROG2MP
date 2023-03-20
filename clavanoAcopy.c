@@ -2,7 +2,7 @@
 CCPROG2 S18 GROUP <NUMBER>
 Name: Clavano, Angelica Therese I.
 Date created: 2023-02-22
-Last modified: 2023-02-23
+Last modified: 2023-03-20
 
 Notes: (1) won't run in Repl.it console, (2) vsCode Terminal won't show flashing colors, (3) Win11 Terminal shows no difference between bold and non-bold colors.
 (4) exe file crashes when manually selected. (5) runs when F11 in devc++
@@ -88,9 +88,8 @@ int vaxreg_userreg_checkID(struct user *Profiles, int *num_usersptr, int tempid)
     {
         if (tempid == Profiles[i].userID)
             return tempid;
-        else // if (tempid != Profiles[i].userID)
-            return 0;
     }
+    return 0;
 }
 
 /* Iterates through profiles and checks if userID = 0, if true, return index */
@@ -100,7 +99,7 @@ int vaxreg_userreg_checkifempty(struct user *Profiles, int *num_usersptr)
     {
         if (Profiles[i].userID == 0)
         {
-            return i;
+            return i+1;
         }
     }
     return -1; // Indicates no empty profile found
@@ -116,11 +115,11 @@ void vaxreg_useregistration(struct user *Profiles, int *num_usersptr)
 	char lastname[11];
 
     /* Temporary variables to be used in the function */
-    int tempid; //used in vaxreg_userreg_checkID
-    char addnewuser; // stores the user's choice to add a new user
-    int emptyprofile; // stores the return value of vaxreg_userreg_checkifempty
-    int idcheck; // stores the return value of vaxreg_userreg_checkID
-    int idavailable; 
+    int tempid = 0; //used in vaxreg_userreg_checkID
+    char addnewuser = 0; // stores the user's choice to add a new user
+    int emptyprofile = 0; // stores the return value of vaxreg_userreg_checkifempty
+    int idcheck = 0; // stores the return value of vaxreg_userreg_checkID
+    int idavailable = 0; 
     
     /* Checks if there are empty profiles */
     
@@ -129,23 +128,23 @@ void vaxreg_useregistration(struct user *Profiles, int *num_usersptr)
 
     if (*num_usersptr < MAX_USERS) // checks if there is space for more users
     {
-     	    printf("Add new user? (y for yes, n for no):");
-            fgets(&addnewuser, 1, stdin);
+            printf("There are %d users.\n", *num_usersptr);
+     	    printf("Add new user? (1 for yes, 0 for no):");
+            scanf("%d", &addnewuser);
 
-            while (addnewuser == 'Y' || 'y') // if add new user prompt is true, begin looking for empty profiles
+            if (addnewuser != 0) // if add new user prompt is true, begin looking for empty profiles
             {
-                emptyprofile = vaxreg_userreg_checkifempty(Profiles, num_usersptr);
+                emptyprofile =  vaxreg_userreg_checkifempty(Profiles, num_usersptr);
 
                 if (emptyprofile > 0) // if an empty profile was found, begin user input
                 {
                     printf("Empty profile %d found. Adding new user...\n", emptyprofile);
 					printf(ANSI_BLUE "Enter user data:\n" ANSI_OFF);
 
-                    while (idavailable = 0) // if id is not available, loop until it is
+                while (idavailable = 0) // if id is not available, loop until it is
                     {
                         printf("Enter userID: ");
 					    scanf("%d", tempid);
-
                         idcheck = vaxreg_userreg_checkID(Profiles, num_usersptr, tempid);
                     
                         if (idcheck != 0)
@@ -156,7 +155,7 @@ void vaxreg_useregistration(struct user *Profiles, int *num_usersptr)
                         }
                         else
                             printf(ANSI_RED "Error: userID already taken in Profile %d.\n" ANSI_OFF, idcheck);
-                    }
+                    } 
                     
                     printf("Enter contact number: ");
 					scanf("%d", &Profiles[emptyprofile].contact);
