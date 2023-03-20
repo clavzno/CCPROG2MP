@@ -93,20 +93,19 @@ int vaxreg_userreg_checkID(struct user *Profiles, int *num_usersptr, int tempid)
     }
 }
 
-/* Iterates through profiles and checks if userID = 0, if true, return i */
+/* Iterates through profiles and checks if userID = 0, if true, return index */
 int vaxreg_userreg_checkifempty(struct user *Profiles, int *num_usersptr)
 {
-	int i;
-    for (i = 0; i < *num_usersptr; i++)
+    for (int i = 0; i < *num_usersptr; i++)
     {
         if (Profiles[i].userID == 0)
         {
-            printf("Empty profile found at Profile %d.\n", i);
             return i;
         }
-        return 0;
     }
+    return -1; // Indicates no empty profile found
 }
+
 
 /* Main vax registration */
 void vaxreg_useregistration(struct user *Profiles, int *num_usersptr)
@@ -118,7 +117,7 @@ void vaxreg_useregistration(struct user *Profiles, int *num_usersptr)
 
     /* Temporary variables to be used in the function */
     int tempid; //used in vaxreg_userreg_checkID
-    int addnewuser;
+    char addnewuser; // stores the user's choice to add a new user
     int emptyprofile; // stores the return value of vaxreg_userreg_checkifempty
     int idcheck; // stores the return value of vaxreg_userreg_checkID
     int idavailable; 
@@ -126,17 +125,18 @@ void vaxreg_useregistration(struct user *Profiles, int *num_usersptr)
     /* Checks if there are empty profiles */
     
 	printf("You are in User Registration.\n");
+    fflush(stdin);
 
     if (*num_usersptr < MAX_USERS) // checks if there is space for more users
     {
-        	printf("Add new user? (1 for yes, 0 for no):");
-	        scanf("%d", &addnewuser);
+     	    printf("Add new user? (y for yes, n for no):");
+            fgets(&addnewuser, 1, stdin);
 
-            while (addnewuser == 1) // if add new user prompt is true, begin looking for empty profiles
+            while (addnewuser == 'Y' || 'y') // if add new user prompt is true, begin looking for empty profiles
             {
                 emptyprofile = vaxreg_userreg_checkifempty(Profiles, num_usersptr);
 
-                if (emptyprofile != 0) // if an empty profile was found, begin user input
+                if (emptyprofile > 0) // if an empty profile was found, begin user input
                 {
                     printf("Empty profile %d found. Adding new user...\n", emptyprofile);
 					printf(ANSI_BLUE "Enter user data:\n" ANSI_OFF);
@@ -224,6 +224,7 @@ void vaxreg_useregistration(struct user *Profiles, int *num_usersptr)
 						strcpy(Profiles[emptyprofile].dose3_type, "N/A");
 						strcpy(Profiles[emptyprofile].dose3_loc, "N/A");
 					}
+                    (*num_usersptr)++;
                     printf("Add new user? (1 for yes, 0 for no): ");
 	                scanf("%d", &addnewuser);
                 }
