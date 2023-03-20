@@ -80,6 +80,29 @@ void display_loading()
 /* Below are subfunctions/menus to be called to preserve code readability. The
 programmer is aware of the amount of pointer variables to be passed within these
 subfunctions. */
+/* Checks if the ID entered was taken */
+int vaxreg_userreg_checkID(struct user *Profiles, int *num_usersptr, int tempid)
+{
+    for (int i = 0; i < *num_usersptr; i++) {
+        if (Profiles[i].userID == tempid) {
+            return 1; // ID is taken
+        }
+    }
+    return 0; // ID is not taken	
+}
+
+/* Iterates through profiles and checks if userID = 0, if true, return i to be used for profile */
+int vaxreg_userreg_checkifempty(struct user *Profiles, int *num_usersptr)
+{
+    for (int i = 0; i < *num_usersptr; i++) {
+        if (Profiles[i].userID == 0) {
+            return i; // return index of empty profile
+        }
+    }
+    return -1; // no empty profile found	
+}
+
+/* Main vax registration */
 void vaxreg_useregistration(struct user *Profiles, int *num_usersptr)
 {
 	int more_than_one_dose;
@@ -87,8 +110,9 @@ void vaxreg_useregistration(struct user *Profiles, int *num_usersptr)
 	char firstname[11];
 	char lastname[11];
 	int addnewuser;
-	int i, j;
+	int i, j; // for iteration
 	int n = 0; // for iteration
+	int id = 0; // for checking if userID is already taken
 	printf("You are in User Registration.\n");
 
 	// if addnewuser == 1, then add new user
@@ -100,34 +124,46 @@ void vaxreg_useregistration(struct user *Profiles, int *num_usersptr)
 	printf("Add new user? (1 for yes, 0 for no): ");
 	scanf("%d", &addnewuser);
 
-	while (addnewuser == !0) // while addnewuser is 1
+	while (addnewuser == 1) // while addnewuser is 1
 	{
 		if (*num_usersptr < MAX_USERS) // if number of users is less than 100
 		{
 			for (i = n; i < MAX_USERS; i++) // if there are enough users, iterate through the array of structs
 			{
-				if (Profiles[i].userID != 0) // if userID has data
+				if (Profiles[i].userID != 0) // if profile userID has data
 				{
 					printf("Profile %d has data. Moving to next profile...\n", i);
 					n++;
 				}
 
-				else
+				else if (Profiles[i].userID == 0) // if profile userID is empty
 				{
-					for (i = 0; i < *num_usersptr; i++) // iterate through the array of structs
+					for (i = n; i < *num_usersptr; i++) // iterate through the array of structs
 					{
 						// prompt user for input and store it in the struct
+						printf("Empty profile %d found. Adding new user...\n", i);
 						printf(ANSI_BLUE "Enter user data:\n" ANSI_OFF);
-						printf("Enter userID: ");
-						scanf("%d", &Profiles[i].userID);
 
-						// check if userID is already taken
-						for (int j = 0; j < *num_usersptr; j++)
+						// entering userID 
+						while (id == 0)
 						{
-							if (Profiles[i].userID == Profiles[j].userID)
+							printf("Enter userID: ");
+							scanf("%d", &Profiles[i].userID);
+
+							//check if userID was already taken by checking each profile
+							for (int j = 0; j < i; j++)
 							{
-								printf(ANSI_RED "Error: userID already taken.\n" ANSI_OFF);
-								return;
+								if (Profiles[i].userID == Profiles[j].userID) // if userID is already taken
+								{
+									printf(ANSI_RED "Error: userID already taken.\n" ANSI_OFF);
+									Profiles[i].userID = 0; // reset userID to 0
+									id = 0;
+								}
+								else
+								{
+									printf(ANSI_BLUE "User ID added successfully.\n" ANSI_OFF);
+									id = 1;
+								}
 							}
 						}
 
@@ -209,164 +245,162 @@ void vaxreg_useregistration(struct user *Profiles, int *num_usersptr)
 							printf("Number of users %d", *num_usersptr);
 						} */
 					} // end for
+
 					(*num_usersptr)++;
+					printf("Add new user? (1 for yes, 0 for no): ");
+					scanf("%d", &addnewuser);
 				}
-
-			} // end if
-
-			printf("Add new user? (1 for yes, 0 for no): ");
-			scanf("%d", &addnewuser);
-
-		} //end if
-	} //end while
+			}
+		}
+	}
 }
 
-	void vaxreg_vaxappointment(struct user * Profiles, int *num_usersptr)
-	{
-		printf("You are in Vaccination Appointment.\n");
-	}
-	void vaxreg_faqs(struct user * Profiles, int *num_usersptr)
-	{
-		printf("You are in FAQs.\n");
-	}
-	int vaxreg_exit(struct user * Profiles, int *num_usersptr)
-	{
-		system("cls");
-		return 0;
-	}
+void vaxreg_vaxappointment(struct user *Profiles, int *num_usersptr)
+{
+	printf("You are in Vaccination Appointment.\n");
+}
+void vaxreg_faqs(struct user *Profiles, int *num_usersptr)
+{
+	printf("You are in FAQs.\n");
+}
+int vaxreg_exit(struct user *Profiles, int *num_usersptr)
+{
+	system("cls");
+	return 0;
+}
 
-	/* Called when "Vaccination Registration" option is chosen by user */
-	void menu_vaxregistration(struct user * Profiles, int *num_usersptr)
+/* Called when "Vaccination Registration" option is chosen by user */
+void menu_vaxregistration(struct user *Profiles, int *num_usersptr)
+{
+	int choice;
+	printf("**************************\n");
+	printf("\n");
+	printf(ANSI_YELLOW "Vaccination Registration\n" ANSI_OFF);
+	printf("\n");
+	printf("Select Option:\n");
+	printf("[1] User Registration\n");
+	printf("[2] Create Vaccine Appointment\n");
+	printf("[3] FAQs\n");
+	printf("[4] Exit\n");
+	printf("\n");
+	printf("**************************\n");
+	printf("\n");
+	printf("Enter choice: ");
+	scanf("%d", &choice);
+	printf("\n");
+
+	switch (choice)
 	{
-		int choice;
-		printf("**************************\n");
-		printf("\n");
-		printf(ANSI_YELLOW "Vaccination Registration\n" ANSI_OFF);
-		printf("\n");
-		printf("Select Option:\n");
-		printf("[1] User Registration\n");
-		printf("[2] Create Vaccine Appointment\n");
-		printf("[3] FAQs\n");
-		printf("[4] Exit\n");
-		printf("\n");
-		printf("**************************\n");
-		printf("\n");
-		printf("Enter choice: ");
-		scanf("%d", &choice);
-		printf("\n");
-
-		switch (choice)
-		{
-		case 1: // user registration
-			vaxreg_useregistration(Profiles, num_usersptr);
-			break;
-		case 2: // vaccine appointment
-			vaxreg_vaxappointment(Profiles, num_usersptr);
-			break;
-		case 3: // FAQs
-			vaxreg_faqs(Profiles, num_usersptr);
-			break;
-		case 4: // exit
-			vaxreg_exit(Profiles, num_usersptr);
-			break;
-		default:
-			printf("Invalid input. Please try again.\n");
-		}
+	case 1: // user registration
+		vaxreg_useregistration(Profiles, num_usersptr);
+		break;
+	case 2: // vaccine appointment
+		vaxreg_vaxappointment(Profiles, num_usersptr);
+		break;
+	case 3: // FAQs
+		vaxreg_faqs(Profiles, num_usersptr);
+		break;
+	case 4: // exit
+		vaxreg_exit(Profiles, num_usersptr);
+		break;
+	default:
+		printf("Invalid input. Please try again.\n");
 	}
+}
 
-	/* During Vaccination Registration and Data Management, the values in selected
-	user and appointment files are saved, preserved, and can be edited. Every chatbot
-	interaction including questions and answers are saved and preserved. */
-	void generate_userfile(struct user * Profiles)
+/* During Vaccination Registration and Data Management, the values in selected
+user and appointment files are saved, preserved, and can be edited. Every chatbot
+interaction including questions and answers are saved and preserved. */
+void generate_userfile(struct user *Profiles)
+{
+	printf("Added to user file.\n");
+}
+void generate_appointmentfile(struct user *Profiles)
+{
+	printf("Added to appointment file.\n");
+}
+void generate_chatfile(struct user *Profiles)
+{
+	printf("Conversation has been added to chat file.");
+}
+
+/* Called when "Manage Data" option is chosen by the user */
+void menu_datamanagement(struct user *Profiles, int *num_usersptr)
+{
+	printf("You are in Data Management.\n");
+}
+/* Below are subfunctions/menus to be called to preserve code readability. The
+programmer is aware of the amount of pointer variables to be passed within these
+subfunctions. */
+void data_user() {}
+void data_appt() {}
+void data_chatbot() {}
+void data_export() {}
+void data_import() {}
+void data_exit() {}
+
+/* Extra: Called when "Accessibility" option is chosen by the user */
+void menu_accessibilty() {} // allows for options to remove
+/* Below are subfunctions/menus to be called to preserve code readability. The
+programmer is aware of the amount of pointer variables to be passed within these
+subfunctions. */
+void acc_removeblinking() {} // allows user to remove flashing colors
+void acc_language() {}		 // allows user to choose between english and filipino
+void acc_bgcolor() {}		 // allows user to choose between darkmode and lightmode for the terminal
+
+/* Displays main menu offering 2 options: Vaccination Registration Menu
+("Vaccination Registration") and Data Management Menu ("Manage Data") */
+int menu_main(struct user *Profiles, int *num_usersptr, struct settings *setptr)
+{
+	int choice;
+	printf("**************************\n");
+	printf("\n");
+	printf(ANSI_WHITE "Welcome to" ANSI_OFF ANSI_FLASH_RED " Vax" ANSI_OFF ANSI_FLASH_BLUE "Bot" ANSI_OFF ANSI_FLASH_WHITE "PH!" ANSI_OFF "\n");
+	printf("\n");
+	printf("Select Menu:\n");
+	printf("[1] Vaccination Registration\n");
+	printf("[2] Manage Data\n");
+	printf("[3] Accessibility\n");
+	printf("[4] Exit\n");
+	printf("\n");
+	printf("**************************\n");
+	printf("\n");
+	printf("Enter choice: ");
+	scanf("%d", &choice);
+	printf("\n");
+
+	switch (choice)
 	{
-		printf("Added to user file.\n");
+	case 1: // vax registration
+		menu_vaxregistration(Profiles, num_usersptr);
+		break;
+	case 2: // manage data
+		menu_datamanagement(Profiles, num_usersptr);
+		break;
+	case 3: // accessibility
+		menu_accessibilty(setptr);
+		break;
+	case 4: // exit
+		break;
+	default:
+		printf("Invalid input. Please try again.\n");
 	}
-	void generate_appointmentfile(struct user * Profiles)
-	{
-		printf("Added to appointment file.\n");
-	}
-	void generate_chatfile(struct user * Profiles)
-	{
-		printf("Conversation has been added to chat file.");
-	}
+}
 
-	/* Called when "Manage Data" option is chosen by the user */
-	void menu_datamanagement(struct user * Profiles, int *num_usersptr)
-	{
-		printf("You are in Data Management.\n");
-	}
-	/* Below are subfunctions/menus to be called to preserve code readability. The
-	programmer is aware of the amount of pointer variables to be passed within these
-	subfunctions. */
-	void data_user() {}
-	void data_appt() {}
-	void data_chatbot() {}
-	void data_export() {}
-	void data_import() {}
-	void data_exit() {}
+/***********************************************************************/
+/* Driver code */
+int main()
+{
+	struct user Profiles[MAX_USERS]; // array of user profiles
+	struct user *ptr = Profiles;	 // pointer to Profiles to access values
+	struct settings Settings;
+	struct settings *setptr = &Settings; // pointer to Settings to access values
 
-	/* Extra: Called when "Accessibility" option is chosen by the user */
-	void menu_accessibilty() {} // allows for options to remove
-	/* Below are subfunctions/menus to be called to preserve code readability. The
-	programmer is aware of the amount of pointer variables to be passed within these
-	subfunctions. */
-	void acc_removeblinking() {} // allows user to remove flashing colors
-	void acc_language() {}		 // allows user to choose between english and filipino
-	void acc_bgcolor() {}		 // allows user to choose between darkmode and lightmode for the terminal
+	int num_users = 0;				// we know the max size but we don't know the number of users
+	int *num_usersptr = &num_users; // pointer to num_users to access value of users thus far
 
-	/* Displays main menu offering 2 options: Vaccination Registration Menu
-	("Vaccination Registration") and Data Management Menu ("Manage Data") */
-	int menu_main(struct user * Profiles, int *num_usersptr, struct settings *setptr)
-	{
-		int choice;
-		printf("**************************\n");
-		printf("\n");
-		printf(ANSI_WHITE "Welcome to" ANSI_OFF ANSI_FLASH_RED " Vax" ANSI_OFF ANSI_FLASH_BLUE "Bot" ANSI_OFF ANSI_FLASH_WHITE "PH!" ANSI_OFF "\n");
-		printf("\n");
-		printf("Select Menu:\n");
-		printf("[1] Vaccination Registration\n");
-		printf("[2] Manage Data\n");
-		printf("[3] Accessibility\n");
-		printf("[4] Exit\n");
-		printf("\n");
-		printf("**************************\n");
-		printf("\n");
-		printf("Enter choice: ");
-		scanf("%d", &choice);
-		printf("\n");
-
-		switch (choice)
-		{
-		case 1: // vax registration
-			menu_vaxregistration(Profiles, num_usersptr);
-			break;
-		case 2: // manage data
-			menu_datamanagement(Profiles, num_usersptr);
-			break;
-		case 3: // accessibility
-			menu_accessibilty(setptr);
-			break;
-		case 4: // exit
-			break;
-		default:
-			printf("Invalid input. Please try again.\n");
-		}
-	}
-
-	/***********************************************************************/
-	/* Driver code */
-	int main()
-	{
-		struct user Profiles[MAX_USERS]; // array of user profiles
-		struct user *ptr = Profiles;	 // pointer to Profiles to access values
-		struct settings Settings;
-		struct settings *setptr = &Settings; // pointer to Settings to access values
-
-		int num_users = 0;				// we know the max size but we don't know the number of users
-		int *num_usersptr = &num_users; // pointer to num_users to access value of users thus far
-
-		// note use malloc to add new user space?
-		// display_loading();
-		menu_main(ptr, num_usersptr, setptr);
-		return 0;
-	}
+	// note use malloc to add new user space?
+	// display_loading();
+	menu_main(ptr, num_usersptr, setptr);
+	return 0;
+}
