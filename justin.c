@@ -6,7 +6,7 @@ Description: // WIP //
 
 Programmed by: Justin Patrick M. De Grano - S18B
 Last modified: 3-16-2022
-Version: V0.2A
+Version: V0.2B
 
 ***************************************************************************/
 
@@ -152,95 +152,125 @@ struct userStats
 
    back to menu - heads the user straight to the main menu */
 
-void menuReg_User(struct userStats *uProf, int userAmount) {
+void menuReg_User(struct userStats *uProfPT, int userAmount) {
 	
-	int tempDoseMult = 0;
+	int tempRegDecs = 0; // variable for determining whether the user wants to register or not
+	int tempRegAmount = 0; // variable for how many users is to be registered in the prompt
+	int tempDoseMult = 0; // variable for whether or not the user did multiple vaxx doses
 	int tempUID = userAmount; //refers to the new registered user to be made
-
+	
 	displayLine();
 	
 	printf("\nVaxDB User Registration\n");
-
-    displayLine();
-    
-	printf("\nPlease Input your User Data: \n");
-
-	displayLine();
-
-	printf("\nEnter UserID: ");
-	scanf("%d", &uProf[tempUID].userID);
-	printf("\nEnter Contact Number: ");
-	scanf("%d", &uProf[tempUID].contactNum);
-	printf("\nEnter Password: ");
-	scanf("%d", &uProf[tempUID].password);
 	
 	displayLine();
 	
-	printf("\nEnter Full Name (One Space, First then Last): ");
-	scanf("%s%s", &uProf[tempUID].userNameF, &uProf[tempUID].userNameL);
-	printf("\nEnter Address): ");
-	scanf("%s", &uProf[tempUID].address);
-	printf("\nEnter Sex): ");
-	scanf("%s", &uProf[tempUID].sex);
+	printf("\nWould You Like to Register User(s) (0 for No, 1 for Yes)?\n");
+	scanf("%d", &tempRegDecs);
 	
-	displayLine();
-
-	printf("\nEnter Date of First Vaccination): ");
-	scanf("%s", &uProf[tempUID].dose1);
-	printf("\nEnter Brand of First Vaccine): ");
-	scanf("%s", &uProf[tempUID].dose1Vaxx);
-	printf("\nEnter Location of First Vaccination): ");
-	scanf("%s", &uProf[tempUID].dose1Loc);
-
-	displayLine();
-	
-	printf("\nAnswer Simply with '0' (None), '1' (Two Doses), '2' (Three Doses)\n");
-	printf("\nEnter Amount of Booster Doses: ");
-	scanf("%d", &tempDoseMult);
-	
-    switch (tempDoseMult)
+	if (tempRegDecs == 1)
 	{
-        case 0:
-			strcpy(uProf[tempUID].dose2, "N/A");        
-			strcpy(uProf[tempUID].dose2Vaxx, "N/A");        
-			strcpy(uProf[tempUID].dose2Loc, "N/A");   
-			strcpy(uProf[tempUID].dose3, "N/A");        
-			strcpy(uProf[tempUID].dose3Vaxx, "N/A");        
-			strcpy(uProf[tempUID].dose3Loc, "N/A");            
-			break;
-        case 1:
-        	printf("\nEnter Date of Second Vaccination): ");
-			scanf("%s", &uProf[tempUID].dose2);
-			printf("\nEnter Brand of Second Vaccine): ");
-			scanf("%s", &uProf[tempUID].dose2Vaxx);
-			printf("\nEnter Location of Third Vaccination): ");
-			scanf("%s", &uProf[tempUID].dose2Loc);
-			strcpy(uProf[tempUID].dose3, "N/A");        
-			strcpy(uProf[tempUID].dose3Vaxx, "N/A");        
-			strcpy(uProf[tempUID].dose3Loc, "N/A");       
-        	break;
-        case 2:
-        	printf("\nEnter Date of Second Vaccination): ");
-			scanf("%s", &uProf[tempUID].dose2);
-			printf("\nEnter Brand of Second Vaccine): ");
-			scanf("%s", &uProf[tempUID].dose2Vaxx);
-			printf("\nEnter Location of Sceond Vaccination): ");
-			scanf("%s", &uProf[tempUID].dose2Loc);
-			printf("\nEnter Date of Third Vaccination): ");
-			scanf("%s", &uProf[tempUID].dose3);
-			printf("\nEnter Brand of Third Vaccine): ");
-			scanf("%s", &uProf[tempUID].dose3Vaxx);
-			printf("\nEnter Location of Third Vaccination): ");
-			scanf("%s", &uProf[tempUID].dose3Loc);
-        	break;
-        default:
-        	printf("\nInvalid Input, Please Read the Instructions Carefully.\n");
-        	printf("\nAnswer Simply with 0 (None), 1 (Two Doses), 2 (Three Doses)\n");
-			printf("\nEnter Amount of Booster Doses: ");
-			scanf("%d", &tempDoseMult);
-    }
+		
+		printf("\nIf So, How Many?\n");
+		scanf("%d", &tempRegAmount);
 	
-	userAmount++;
+		for (int i = 0; i < tempRegAmount; i++) 
+		
+		{
+	
+		displayLine();
+		
+		printf("\nPlease Input your User Data\n");
+
+		displayLine();
+
+		printf("\nEnter UserID: ");
+		scanf("%d", &uProfPT[tempUID].userID);
+		printf("\nEnter Contact Number: ");
+		scanf("%d", &uProfPT[tempUID].contactNum);
+		printf("\nEnter Password: ");
+		scanf("%d", &uProfPT[tempUID].password);
+		
+		displayLine();
+		
+		printf("\nEnter First Name: ");
+		scanf("%s", &uProfPT[tempUID].userNameF);
+		printf("\nEnter Last Name): ");
+		scanf("%s", &uProfPT[tempUID].userNameL);
+		printf("\nEnter Address: ");
+		scanf(" %s", &uProfPT[tempUID].address);
+		printf("\nEnter Sex: ");
+		scanf("%s", &uProfPT[tempUID].sex);
+		
+		displayLine();
+
+		printf("\nEnter Date of First Vaccination: ");
+		scanf("%s", &uProfPT[tempUID].dose1);
+		printf("\nEnter Brand of First Vaccine: ");
+		scanf("%s", &uProfPT[tempUID].dose1Vaxx);
+		printf("\nEnter Location of First Vaccination: ");
+		scanf("%s", &uProfPT[tempUID].dose1Loc);
+
+		displayLine();
+		
+		printf("\nAnswer Simply with '1' (None), '2' (Two Doses), '3' (Three Doses)\n");
+		printf("\nEnter Amount of Booster Doses: ");
+		scanf("%d", &tempDoseMult);
+		
+		do {
+			switch (tempDoseMult)
+			{
+				case 1:
+					strcpy(uProfPT[tempUID].dose2, "N/A");        
+					strcpy(uProfPT[tempUID].dose2Vaxx, "N/A");        
+					strcpy(uProfPT[tempUID].dose2Loc, "N/A");   
+					strcpy(uProfPT[tempUID].dose3, "N/A");        
+					strcpy(uProfPT[tempUID].dose3Vaxx, "N/A");        
+					strcpy(uProfPT[tempUID].dose3Loc, "N/A");            
+					break;
+				case 2:
+					printf("\nEnter Date of Second Vaccination: ");
+					scanf("%s", &uProfPT[tempUID].dose2);
+					printf("\nEnter Brand of Second Vaccine: ");
+					scanf("%s", &uProfPT[tempUID].dose2Vaxx);
+					printf("\nEnter Location of Third Vaccination: ");
+					scanf("%s", &uProfPT[tempUID].dose2Loc);
+					strcpy(uProfPT[tempUID].dose3, "N/A");        
+					strcpy(uProfPT[tempUID].dose3Vaxx, "N/A");        
+					strcpy(uProfPT[tempUID].dose3Loc, "N/A");       
+					break;
+				case 3:
+					printf("\nEnter Date of Second Vaccination: ");
+					scanf("%s", &uProfPT[tempUID].dose2);
+					printf("\nEnter Brand of Second Vaccine: ");
+					scanf("%s", &uProfPT[tempUID].dose2Vaxx);
+					printf("\nEnter Location of Second Vaccination): ");
+					scanf("%s", &uProfPT[tempUID].dose2Loc);
+					printf("\nEnter Date of Third Vaccination): ");
+					scanf("%s", &uProfPT[tempUID].dose3);
+					printf("\nEnter Brand of Third Vaccine): ");
+					scanf("%s", &uProfPT[tempUID].dose3Vaxx);
+					printf("\nEnter Location of Third Vaccination): ");
+					scanf("%s", &uProfPT[tempUID].dose3Loc);
+					break;
+				default:
+					printf("\nInvalid Input, Please Read the Instructions Carefully.\n");
+			}
+		} while (tempDoseMult != 1 && tempDoseMult != 2 && tempDoseMult != 3);
+		
+		tempUID++;
+		
+		}
+		
+		userAmount = tempUID; //amount of users registered will be assigned as the amount of users assigned.
+		menuReg (uProfPT, userAmount); // brings back the user to vaxx reg menu.
+		
+	}
+	else
+	{
+		printf("\nInput is Either Invalid or 0. Bringing You Back to the Vaxx Registration Menu.\n");
+		menuReg (uProfPT, userAmount); // brings back the user to vaxx reg menu.
+	}
 }
 
 void menuReg_Vapp() {}
@@ -250,13 +280,12 @@ void menuReg_Chat() {}
 
 void menuReg_Exit() {}
 
-char menuReg(struct userStats uProf, int userAmount) {
+void menuReg(struct userStats *uProfPT, int userAmount) {
 
 	displayMenu_A();
 	
 	char cOpt;
-    struct userStats *uProfptr = &uProf;
-    
+	    
     printf("\nEnter Choice: ");
     scanf(" %c", &cOpt);
     
@@ -264,7 +293,7 @@ char menuReg(struct userStats uProf, int userAmount) {
 	{
         case 'A':
         case 'a':
-            menuReg_User (uProfptr, userAmount);
+            menuReg_User (uProfPT, userAmount);
         	break;
         case 'B':
         case 'b':
@@ -281,7 +310,6 @@ char menuReg(struct userStats uProf, int userAmount) {
         default:
         	printf("\nInvalid input, please only use what's indicated.\n");
     }
-    return cOpt;
 }
 
 /* file generation - here are the functions necessary for the
@@ -312,7 +340,7 @@ void menuMng_Import() {}
 
 void menuMng_Exit() {}
 
-char menuMng() {
+void menuMng(struct userStats *uProfPT, int userAmount) {
 
 	displayMenu_B();
 	
@@ -350,13 +378,11 @@ char menuMng() {
         default:
         	printf("\nInvalid input, please only use what's indicated.\n");
     }
-    return cOpt;
-
 }
 
 /* The main menu that the user will be at initially. */
 
-char menuMain (struct userStats uProf, int userAmount) {
+void menuMain (struct userStats *uProfPT, int userAmount) {
 	
 	displayMenu();
 	
@@ -369,20 +395,18 @@ char menuMain (struct userStats uProf, int userAmount) {
 	{
         case 'A':
         case 'a':
-            menuReg(uProf, userAmount);
+            menuReg(uProfPT, userAmount);
         	break;
         case 'B':
         case 'b':
-        	menuMng();
+        	menuMng(uProfPT, userAmount);
         	break;
         case 'X':
         case 'x':
         	break;
         default:
         	printf("\nInvalid input, please only use what's indicated.\n");
-    }
-    return cOpt;
-	
+    }	
 };
 
 /* Here lies the function main. */
@@ -393,6 +417,11 @@ int main() {
   
   int userAmount = 0; // refers to the amount of users that inputted in the program, initially starts with 0
   struct userStats uProf[MAX_USERS]; // structural array for users in the program
+  struct userStats *uProfPT = uProf; // pointers for uProf to access values
+  
+//  int vappAmount = 0;
+//  struct vappStats vProf[MAX_USERS]; // structural array for users in the program
+//  struct vappStats *vProfPT = vProf; // pointers for uProf to access values
      
   /* program introduction */
 
@@ -400,7 +429,7 @@ int main() {
   
   /* main project menu output */
   
-  menuMain (uProf[MAX_USERS], userAmount);
+  menuMain (uProfPT, userAmount);
   
   return 0;
 }
