@@ -77,6 +77,7 @@ void display_loading()
 
 	system("cls"); // clears the screen
 }
+
 /* Below are subfunctions/menus to be called to preserve code readability. The
 programmer is aware of the amount of pointer variables to be passed within these
 subfunctions. */
