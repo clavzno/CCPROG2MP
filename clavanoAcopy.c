@@ -116,7 +116,7 @@ void vaxreg_useregistration(struct user *Profiles, int *num_usersptr)
 
     /* Temporary variables to be used in the function */
     int tempid = 0; //used in vaxreg_userreg_checkID
-    char addnewuser = 0; // stores the user's choice to add a new user
+    int addnewuser = 0; // stores the user's choice to add a new user
     int emptyprofile = 0; // stores the return value of vaxreg_userreg_checkifempty
     int idcheck = 0; // stores the return value of vaxreg_userreg_checkID
     int idavailable = 0; 
