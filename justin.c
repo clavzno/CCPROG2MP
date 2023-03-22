@@ -180,7 +180,7 @@ void menuReg_User(struct userStats *uProfPT, int userAmount) {
 	
 		displayLine();
 		
-		printf("\nPlease Input your User Data\n");
+		printf("\nPlease Input your User Data for ID#%d\n", tempUID);
 
 		displayLine();
 
@@ -274,7 +274,6 @@ void menuReg_User(struct userStats *uProfPT, int userAmount) {
 }
 
 void menuReg_Vapp() {}
-// jack: try giving the user file a pointer to the vax appt details file
 
 void menuReg_Chat() {}
 
