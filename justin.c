@@ -5,8 +5,8 @@ CCPROG2 Machine Project - Vaccination Registration Application with Chatbot
 Description: // WIP //
 
 Programmed by: Justin Patrick M. De Grano - S18B
-Last modified: 3-16-2022
-Version: V0.2B
+Last modified: 3-22-2022
+Version: V0.2C
 
 ***************************************************************************/
 
@@ -17,6 +17,7 @@ Version: V0.2B
 
 #define MAX_USERS 100
 
+typedef char stg6[7];
 typedef char stg10[11];
 typedef char stg20[21];
 typedef char stg30[31];
@@ -131,7 +132,14 @@ struct userStats
 	stg10 dose3, dose3Vaxx, dose3Loc;
 };
 
-//struct vappStats {}
+struct vappStats
+{
+	int appID;
+	stg20 name;
+	stg10 location, vaxx, date, dose;
+	stg6 time;
+	
+};
 //struct chatStats {}
 
 /* These are the functions to be made for the menu options,
@@ -152,7 +160,7 @@ struct userStats
 
    back to menu - heads the user straight to the main menu */
 
-void menuReg_User(struct userStats *uProfPT, int userAmount) {
+void menuReg_User(struct userStats *uProfPT, struct vappStats *vProfPT, int userAmount, int vappAmount) {
 	
 	int tempRegDecs = 0; // variable for determining whether the user wants to register or not
 	int tempRegAmount = 0; // variable for how many users is to be registered in the prompt
@@ -244,13 +252,13 @@ void menuReg_User(struct userStats *uProfPT, int userAmount) {
 					scanf("%s", &uProfPT[tempUID].dose2);
 					printf("\nEnter Brand of Second Vaccine: ");
 					scanf("%s", &uProfPT[tempUID].dose2Vaxx);
-					printf("\nEnter Location of Second Vaccination): ");
+					printf("\nEnter Location of Second Vaccination: ");
 					scanf("%s", &uProfPT[tempUID].dose2Loc);
-					printf("\nEnter Date of Third Vaccination): ");
+					printf("\nEnter Date of Third Vaccination: ");
 					scanf("%s", &uProfPT[tempUID].dose3);
-					printf("\nEnter Brand of Third Vaccine): ");
+					printf("\nEnter Brand of Third Vaccine: ");
 					scanf("%s", &uProfPT[tempUID].dose3Vaxx);
-					printf("\nEnter Location of Third Vaccination): ");
+					printf("\nEnter Location of Third Vaccination: ");
 					scanf("%s", &uProfPT[tempUID].dose3Loc);
 					break;
 				default:
@@ -263,23 +271,100 @@ void menuReg_User(struct userStats *uProfPT, int userAmount) {
 		}
 		
 		userAmount = tempUID; //amount of users registered will be assigned as the amount of users assigned.
-		menuReg (uProfPT, userAmount); // brings back the user to vaxx reg menu.
+		menuReg (uProfPT, vProfPT, userAmount, vappAmount); // brings back the user to vaxx reg menu.
 		
 	}
 	else
 	{
 		printf("\nInput is Either Invalid or 0. Bringing You Back to the Vaxx Registration Menu.\n");
-		menuReg (uProfPT, userAmount); // brings back the user to vaxx reg menu.
+		menuReg (uProfPT, vProfPT, userAmount, vappAmount); // brings back the user to vaxx reg menu.
 	}
 }
 
-void menuReg_Vapp() {}
+void menuReg_Vapp(struct userStats *uProfPT, struct vappStats *vProfPT, int userAmount, int vappAmount) {
+
+	int tempRegDecs = 0; // variable for determining whether the user wants to register or not
+	int tempRegAmount = 0; // variable for how many users is to be registered in the prompt
+	int tempDoseMult = 0; // variable for whether or not the user did multiple vaxx doses
+	int tempUID = vappAmount; //refers to the new registered user to be made
+	
+	displayLine();
+	
+	printf("\nVaxDB Vaccine Appointment\n");
+	
+	displayLine();
+	
+	printf("\nWould You Like to Register Vaccine Appointment(s) (0 for No, 1 for Yes)?\n");
+	scanf("%d", &tempRegDecs);
+
+	struct vappStats
+	{
+		int appID;
+		stg20 name;
+		stg10 date, location, vaxx, dose;
+		stg6 time;
+		
+	};
+
+	if (tempRegDecs == 1)
+	{
+		
+		printf("\nIf So, How Many?\n");
+		scanf("%d", &tempRegAmount);
+	
+		for (int i = 0; i < tempRegAmount; i++) 
+		
+		{
+	
+		displayLine();
+		
+		printf("\nPlease Input your User Data for ID#%d\n", tempUID);
+
+		displayLine();
+
+		printf("\nEnter Appointment ID: ");
+		scanf("%d", &vProfPT[tempUID].appID);
+
+		displayLine();
+		
+		printf("\nEnter Name: ");
+		scanf("%s", &vProfPT[tempUID].name);
+		
+		printf("\nEnter Location: ");
+		scanf("%s", &vProfPT[tempUID].location);
+
+		printf("\nEnter Vaccine: ");
+		scanf("%s", &vProfPT[tempUID].vaxx);
+		
+		printf("\nEnter Date (YYYY-MM-DD): ");
+		scanf("%s", &vProfPT[tempUID].date);
+		
+		printf("\nEnter Time (24HR Format): ");
+		scanf("%s", &vProfPT[tempUID].time);
+		
+		printf("\nEnter Dose (1st/2nd/3rd): ");
+		scanf("%s", &vProfPT[tempUID].dose);
+		
+		tempUID++;
+		
+		}
+		
+		vappAmount = tempUID; //amount of users registered will be assigned as the amount of users assigned.
+		menuReg (uProfPT, vProfPT, userAmount, vappAmount); // brings back the user to vaxx reg menu.
+		
+	}
+	else
+	{
+		printf("\nInput is Either Invalid or 0. Bringing You Back to the Vaxx Registration Menu.\n");
+		menuReg (uProfPT, vProfPT, userAmount, vappAmount); // brings back the user to vaxx reg menu.
+	}
+}
 
 void menuReg_Chat() {}
 
 void menuReg_Exit() {}
 
-void menuReg(struct userStats *uProfPT, int userAmount) {
+void menuReg(struct userStats *uProfPT, struct vappStats *vProfPT, int userAmount, int vappAmount) {
 
 	displayMenu_A();
 	
@@ -292,11 +377,11 @@ void menuReg(struct userStats *uProfPT, int userAmount) {
 	{
         case 'A':
         case 'a':
-            menuReg_User (uProfPT, userAmount);
+            menuReg_User (uProfPT, vProfPT, userAmount, vappAmount);
         	break;
         case 'B':
         case 'b':
-        	menuReg_Vapp ();
+        	menuReg_Vapp (uProfPT, vProfPT, userAmount, vappAmount);
         	break;
         case 'C':
     	case 'c':
@@ -327,9 +412,68 @@ void genChat() {}
    their data (both their registration, vax appointment & chat logs)
    as necessary. It also includes an export & import data function as well.*/
 
-void menuMng_User() {}
+void menuMng_User(struct userStats *uProfPT, struct vappStats *vProfPT, int userAmount, int vappAmount) {
+	
+  int userIDComp;
+  struct userStats empty_struct = {0};
+	
+  displayLine();
 
-void menuMng_Vapp() {}
+  printf("\nVaxDB User Data Management Menu\n");
+
+  displayLine();
+
+  printf("\nInput your Next Course of Action: \n\n");
+
+  printf("(A) Edit User Details\n");
+  printf("(B) Delete User Record\n");
+  printf("(C) Display User Entries\n");
+  printf("(X) Go Back to the Primary Menu\n");
+
+  displayLine();
+
+  char cOpt;
+	    
+  printf("\nEnter Choice: ");
+  scanf(" %c", &cOpt);
+    
+  switch (cOpt)
+  {
+        case 'A':
+        case 'a':
+            printf("\nWhich User ID Would You Like to Modify: ");
+			scanf("%d", &userIDComp);
+        	break;
+        case 'B':
+        case 'b':
+		    printf("\nWhich User Record ID Would You Like to Delete: ");
+			scanf("%d", &userIDComp);
+			if (userIDComp < userAmount) 
+				uProfPT[userIDComp] = empty_struct;
+        	break;
+        case 'C':
+    	case 'c':
+    		for (int i = 0; i <= userAmount; i++)
+    		{
+    			printf("Name: %s %s", uProfPT[i].userNameF, uProfPT[i].userNameL);
+    			printf("Address: %s", uProfPT[i].address);
+    			printf("Sex : %s %s", uProfPT[i].sex);
+    			//Work in Progress
+			}
+        	menuReg_Chat ();
+        	break;
+        case 'X':
+        case 'x':
+        	menuReg_Exit ();
+        	break;
+        default:
+        	printf("\nInvalid input, please only use what's indicated.\n");
+  }
+}
+
+void menuMng_Vapp(struct userStats *uProfPT, struct vappStats *vProfPT, int userAmount, int vappAmount) {
+
+}
 
 void menuMng_Chat() {}
 
@@ -339,7 +483,7 @@ void menuMng_Import() {}
 
 void menuMng_Exit() {}
 
-void menuMng(struct userStats *uProfPT, int userAmount) {
+void menuMng(struct userStats *uProfPT, struct vappStats *vProfPT, int userAmount, int vappAmount) {
 
 	displayMenu_B();
 	
@@ -352,11 +496,11 @@ void menuMng(struct userStats *uProfPT, int userAmount) {
 	{
         case 'A':
         case 'a':
-            menuMng_User();
+            menuMng_User(uProfPT, vProfPT, userAmount, vappAmount);
         	break;
         case 'B':
         case 'b':
-        	menuMng_Vapp();
+        	menuMng_Vapp(uProfPT, vProfPT, userAmount, vappAmount);
         	break;
         case 'C':
     	case 'c':
@@ -381,7 +525,7 @@ void menuMng(struct userStats *uProfPT, int userAmount) {
 
 /* The main menu that the user will be at initially. */
 
-void menuMain (struct userStats *uProfPT, int userAmount) {
+void menuMain (struct userStats *uProfPT, struct vappStats *vProfPT, int userAmount, int vappAmount) {
 	
 	displayMenu();
 	
@@ -394,11 +538,11 @@ void menuMain (struct userStats *uProfPT, int userAmount) {
 	{
         case 'A':
         case 'a':
-            menuReg(uProfPT, userAmount);
+            menuReg(uProfPT, vProfPT, userAmount, vappAmount);
         	break;
         case 'B':
         case 'b':
-        	menuMng(uProfPT, userAmount);
+        	menuMng(uProfPT, vProfPT, userAmount, vappAmount);
         	break;
         case 'X':
         case 'x':
@@ -418,9 +562,9 @@ int main() {
   struct userStats uProf[MAX_USERS]; // structural array for users in the program
   struct userStats *uProfPT = uProf; // pointers for uProf to access values
   
-//  int vappAmount = 0;
-//  struct vappStats vProf[MAX_USERS]; // structural array for users in the program
-//  struct vappStats *vProfPT = vProf; // pointers for uProf to access values
+  int vappAmount = 0;
+  struct vappStats vProf[MAX_USERS]; // structural array for users in the program
+  struct vappStats *vProfPT = vProf; // pointers for uProf to access values
      
   /* program introduction */
 
@@ -428,7 +572,7 @@ int main() {
   
   /* main project menu output */
   
-  menuMain (uProfPT, userAmount);
+  menuMain (uProfPT, vProfPT, userAmount, vappAmount);
   
   return 0;
 }
