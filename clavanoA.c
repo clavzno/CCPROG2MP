@@ -2,7 +2,7 @@
 CCPROG2 S18 GROUP <NUMBER>
 Name: Clavano, Angelica Therese I.
 Date created: 2023-02-22
-Last modified: 2023-02-23
+Last modified: 2023-03-20
 
 Notes: (1) won't run in Repl.it console, (2) vsCode Terminal won't show flashing colors, (3) Win11 Terminal shows no difference between bold and non-bold colors.
 (4) exe file crashes when manually selected. (5) runs when F11 in devc++
@@ -18,15 +18,16 @@ main menu and headers when under a certain module. */
 #define ANSI_FLASH_RED "\e[0;6;31m"
 #define ANSI_FLASH_BLUE "\e[0;6;34m"
 #define ANSI_FLASH_WHITE "\e[0;6;1m"
-#define ANSI_RED "\e[0;31m"
-#define ANSI_BLUE "\e[0;34m"
+#define ANSI_RED "\e[0;31m" // FOR ERRORS
+#define ANSI_BLUE "\e[0;34m" // FOR TIPS
 #define ANSI_WHITE "\e[0;1m"
 #define ANSI_YELLOW "\e[0;93m" // menu 1: vaccination registration
 #define ANSI_GREEN "\e[0;92m"  // menu 2: data management
 #define ANSI_CYAN "\e[0;96m"   // menu 3: settings
 #define ANSI_OFF "\e[0m"	   // removes ANSI code and restores to default text
 // COLOR_OFF to end command; 1 = bold, 5 = slow blink, X = color, m = end of ANSI code
-#define ANSI_
+#define ANSI_PREVLINE "\e[1A" // moves cursor to previous line
+
 
 /* Define directives for max users since dynamic memory allocation is hard */
 #define MAX_USERS 100
@@ -78,182 +79,162 @@ void display_loading()
 
 	system("cls"); // clears the screen
 }
+
 /* Below are subfunctions/menus to be called to preserve code readability. The
 programmer is aware of the amount of pointer variables to be passed within these
 subfunctions. */
 /* Checks if the ID entered was taken */
 int vaxreg_userreg_checkID(struct user *Profiles, int *num_usersptr, int tempid)
 {
-    for (int i = 0; i < *num_usersptr; i++) {
-        if (Profiles[i].userID == tempid) {
-            return 1; // ID is taken
-        }
+	int i;
+    for (i = 0; i < *num_usersptr; i++)
+    {
+        if (tempid == Profiles[i].userID)
+            return tempid;
     }
-    return 0; // ID is not taken	
+    return 0;
 }
 
-/* Iterates through profiles and checks if userID = 0, if true, return i to be used for profile */
+/* Iterates through profiles and checks if userID = 0, if true, return index */
 int vaxreg_userreg_checkifempty(struct user *Profiles, int *num_usersptr)
 {
-    for (int i = 0; i < *num_usersptr; i++) {
-        if (Profiles[i].userID == 0) {
-            return i; // return index of empty profile
+    for (int i = 0; i < *num_usersptr; i++)
+    {
+        if (Profiles[i].userID == 0)
+        {
+            return i+1;
         }
     }
-    return -1; // no empty profile found	
+    return -1; // Indicates no empty profile found
 }
+
 
 /* Main vax registration */
 void vaxreg_useregistration(struct user *Profiles, int *num_usersptr)
 {
-	int more_than_one_dose;
+    int more_than_one_dose;
 	int more_than_two_doses;
 	char firstname[11];
 	char lastname[11];
-	int addnewuser;
-	int i, j; // for iteration
-	int n = 0; // for iteration
-	int id = 0; // for checking if userID is already taken
+
+    /* Temporary variables to be used in the function */
+    int tempid = 0; //used in vaxreg_userreg_checkID
+    int addnewuser = 0; // stores the user's choice to add a new user
+    int emptyprofile = 0; // stores the return value of vaxreg_userreg_checkifempty
+    int idcheck = 0; // stores the return value of vaxreg_userreg_checkID
+    int idavailable = 0; 
+    
+    /* Checks if there are empty profiles */
+    
 	printf("You are in User Registration.\n");
+    fflush(stdin);
 
-	// if addnewuser == 1, then add new user
-	// iterate through the array of structs and check if userID is already taken
-	// if userID is already taken, prompt user to enter a new userID
-	// if userID is not taken, then add new user
-	// if addnewuser == 0, then exit to main menu
+    if (*num_usersptr < MAX_USERS) // checks if there is space for more users
+    {
+            printf("There are %d users.\n", *num_usersptr);
+     	    printf("Add new user? (1 for yes, 0 for no):");
+            scanf("%d", &addnewuser);
 
-	printf("Add new user? (1 for yes, 0 for no): ");
-	scanf("%d", &addnewuser);
+            do  // if add new user prompt is true, begin looking for empty profiles
+            {
+                emptyprofile =  vaxreg_userreg_checkifempty(Profiles, num_usersptr);
 
-	do
-	{
-		if (*num_usersptr < MAX_USERS) // if number of users is less than 100
-		{
-			for (i = n; i < MAX_USERS; i++) // if there are enough users, iterate through the array of structs
-			{
-				if (Profiles[i].userID != 0) // if profile userID has data
-				{
-					printf("Profile %d has data. Moving to next profile...\n", i);
-					n++;
-				}
+                if (emptyprofile > 0) // if an empty profile was found, begin user input
+                {
+                    printf("Empty profile %d found. Adding new user...\n", emptyprofile);
+					printf(ANSI_BLUE "Enter user data:\n" ANSI_OFF);
 
-				else if (Profiles[i].userID == 0) // if profile userID is empty
-				{
-					for (i = n; i < *num_usersptr; i++) // iterate through the array of structs
+                while (idavailable = 0) // if id is not available, loop until it is
+                    {
+                        printf("Enter userID: ");
+					    scanf("%d", tempid);
+                        idcheck = vaxreg_userreg_checkID(Profiles, num_usersptr, tempid);
+                    
+                        if (idcheck != 0)
+                        {
+                            printf("userID is available.\n");
+                            Profiles[emptyprofile].userID = tempid; // assigns userID to profile
+                            idavailable = 1;
+                        }
+                        else
+                            printf(ANSI_RED "Error: userID already taken in Profile %d.\n" ANSI_OFF, idcheck);
+                    } 
+                    
+                    printf("Enter contact number: ");
+					scanf("%d", &Profiles[emptyprofile].contact);
+					printf("Enter password:" ANSI_BLUE " 10 characters max" ANSI_OFF);
+					scanf("%s", Profiles[emptyprofile].password);
+					// Entering full name
+					printf("Enter your first name: ");
+					scanf("%s", firstname);
+					printf("Enter your last name: ");
+					scanf("%s", lastname);
+					strcat(Profiles[emptyprofile].name, firstname);
+					strcat(Profiles[emptyprofile].name, " ");
+					strcat(Profiles[emptyprofile].name, lastname);
+					fflush(stdin); // clears the buffer because of the newline character
+					// Entering address
+					printf("Enter address: ");
+					fgets(Profiles[emptyprofile].address, 31, stdin); // fgets is used to read strings with spaces
+					printf("Enter sex [M/F]: ");
+					scanf("%s", Profiles[emptyprofile].sex);
+					printf("Enter date of your first dose: ");
+					printf(ANSI_BLUE "Date format: 2023-03-16 " ANSI_OFF);
+					scanf("%s", Profiles[emptyprofile].dose1_date);
+					printf("Enter brand of vaccine: ");
+					scanf("%s", Profiles[emptyprofile].dose1_type);
+					printf("Enter location of first dose: ");
+					scanf("%s", Profiles[emptyprofile].dose1_loc);
+					printf("Do you have more than 1 dose? (1 for yes, 0 for no): ");
+					scanf("%d", &more_than_one_dose);
+
+					if (more_than_one_dose == 1)
 					{
-						// prompt user for input and store it in the struct
-						printf("Empty profile %d found. Adding new user...\n", i);
-						printf(ANSI_BLUE "Enter user data:\n" ANSI_OFF);
-
-						// entering userID 
-						while (id == 0)
-						{
-							printf("Enter userID: ");
-							scanf("%d", &Profiles[i].userID);
-
-							//check if userID was already taken by checking each profile
-							for (int j = 0; j < i; j++)
-							{
-								if (Profiles[i].userID == Profiles[j].userID) // if userID is already taken
-								{
-									printf(ANSI_RED "Error: userID already taken.\n" ANSI_OFF);
-									Profiles[i].userID = 0; // reset userID to 0
-									id = 0;
-								}
-								else
-								{
-									printf(ANSI_BLUE "User ID added successfully.\n" ANSI_OFF);
-									id = 1;
-								}
-							}
-						}
-
-						printf("Enter contact number: ");
-						scanf("%d", &Profiles[i].contact);
-						printf("Enter password:" ANSI_BLUE " 10 characters max" ANSI_OFF);
-						scanf("%s", Profiles[i].password);
-						// Entering full name
-						printf("Enter your first name: ");
-						scanf("%s", firstname);
-						printf("Enter your last name: ");
-						scanf("%s", lastname);
-						strcat(Profiles[i].name, firstname);
-						strcat(Profiles[i].name, " ");
-						strcat(Profiles[i].name, lastname);
-						fflush(stdin); // clears the buffer because of the newline character
-						// Entering address
-						printf("Enter address: ");
-						// Note: skips fgets() and goes straight to scanf() if you enter a space
-						fgets(Profiles[i].address, 31, stdin); // fgets is used to read strings with spaces
-						printf("Enter sex [M/F]: ");
-						scanf("%s", Profiles[i].sex);
-						printf("Enter date of your first dose: ");
+						printf("Enter date of your second dose: ");
 						printf(ANSI_BLUE "Date format: 2023-03-16 " ANSI_OFF);
-						scanf("%s", Profiles[i].dose1_date);
+						scanf("%s", Profiles[emptyprofile].dose2_date);
 						printf("Enter brand of vaccine: ");
-						scanf("%s", Profiles[i].dose1_type);
-						printf("Enter location of first dose: ");
-						scanf("%s", Profiles[i].dose1_loc);
-						printf("Do you have more than 1 dose? (1 for yes, 0 for no): ");
-						scanf("%d", &more_than_one_dose);
-
-						if (more_than_one_dose == 1)
+						scanf("%s", Profiles[emptyprofile].dose2_type);
+						printf("Enter location of second dose: ");
+						scanf("%s", Profiles[emptyprofile].dose2_loc);
+						printf("Do you have more than 2 doses? (0/1): ");
+						scanf("%d", &more_than_two_doses);
+							
+                        if (more_than_two_doses == 1)
 						{
-							printf("Enter date of your second dose: ");
-							printf(ANSI_BLUE "Date format: 2023-03-16 " ANSI_OFF);
-							scanf("%s", Profiles[i].dose2_date);
+							printf("Enter date of your third dose: ");
+							printf(ANSI_BLUE "\nDate format: 2023-03-16 " ANSI_OFF);
+							scanf("%s", Profiles[emptyprofile].dose3_date);
 							printf("Enter brand of vaccine: ");
-							scanf("%s", Profiles[i].dose2_type);
+							scanf("%s", Profiles[emptyprofile].dose3_type);
 							printf("Enter location of second dose: ");
-							scanf("%s", Profiles[i].dose2_loc);
-							printf("Do you have more than 2 doses? (0/1): ");
-							scanf("%d", &more_than_two_doses);
-
-							if (more_than_two_doses == 1)
-							{
-								printf("Enter date of your third dose: ");
-								printf(ANSI_BLUE "\nDate format: 2023-03-16 " ANSI_OFF);
-								scanf("%s", Profiles[i].dose3_date);
-								printf("Enter brand of vaccine: ");
-								scanf("%s", Profiles[i].dose3_type);
-								printf("Enter location of second dose: ");
-								scanf("%s", Profiles[i].dose3_loc);
-							}
-							else
-							{
-								// set dose3 fields to "N/A"
-								strcpy(Profiles[i].dose3_date, "N/A");
-								strcpy(Profiles[i].dose3_type, "N/A");
-								strcpy(Profiles[i].dose3_loc, "N/A");
-							}
+							scanf("%s", Profiles[emptyprofile].dose3_loc);
 						}
 						else
-						{
-							// set dose2 and dose3 fields to "N/A"
-							strcpy(Profiles[i].dose2_date, "N/A");
-							strcpy(Profiles[i].dose2_type, "N/A");
-							strcpy(Profiles[i].dose2_loc, "N/A");
-							strcpy(Profiles[i].dose3_date, "N/A");
-							strcpy(Profiles[i].dose3_type, "N/A");
-							strcpy(Profiles[i].dose3_loc, "N/A");
+						{ // set dose3 fields to "N/A"
+							strcpy(Profiles[emptyprofile].dose3_date, "N/A");
+							strcpy(Profiles[emptyprofile].dose3_type, "N/A");
+							strcpy(Profiles[emptyprofile].dose3_loc, "N/A");
 						}
+					}
+					else
+					{ // set dose2 and dose3 fields to "N/A"
+						strcpy(Profiles[emptyprofile].dose2_date, "N/A");
+						strcpy(Profiles[emptyprofile].dose2_type, "N/A");
+						strcpy(Profiles[emptyprofile].dose2_loc, "N/A");
+						strcpy(Profiles[emptyprofile].dose3_date, "N/A");
+						strcpy(Profiles[emptyprofile].dose3_type, "N/A");
+						strcpy(Profiles[emptyprofile].dose3_loc, "N/A");
+					}
+                    (*num_usersptr)++;
+                    printf("Add new user? (1 for yes, 0 for no): ");
+	                scanf("%d", &addnewuser);
+                }
+                else if (emptyprofile = 0)
+                    printf("Maximum number of users reached.\n");
+            } while (addnewuser != 0)
+    }
 
-						/* if (Profiles.userID || Profiles.contact ||
-						Profiles.password || Profiles.name || Profiles.address || Profiles.sex || Profiles.dose1_date || Profiles.dose1_type || Profiles.dose1_loc == "exit" || "Exit")
-						{
-							printf(ANSI_FLASH_RED "User profile incomplete. Please try again.\n" ANSI_OFF);
-							(*num_usersptr)--;
-							printf("Number of users %d", *num_usersptr);
-						} */
-					} // end for
-
-					(*num_usersptr)++;
-					printf("Add new user? (1 for yes, 0 for no): ");
-					scanf("%d", &addnewuser);
-				}
-			}
-		}
-	} while (addnewuser == 1); // while addnewuser is 1
 }
 
 void vaxreg_vaxappointment(struct user *Profiles, int *num_usersptr)
