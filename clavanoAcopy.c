@@ -26,6 +26,8 @@ main menu and headers when under a certain module. */
 #define ANSI_CYAN "\e[0;96m"   // menu 3: settings
 #define ANSI_OFF "\e[0m"	   // removes ANSI code and restores to default text
 // COLOR_OFF to end command; 1 = bold, 5 = slow blink, X = color, m = end of ANSI code
+#define ANSI_PREVLINE "\e[1A" // moves cursor to previous line
+
 
 /* Define directives for max users since dynamic memory allocation is hard */
 #define MAX_USERS 100
@@ -133,7 +135,7 @@ void vaxreg_useregistration(struct user *Profiles, int *num_usersptr)
      	    printf("Add new user? (1 for yes, 0 for no):");
             scanf("%d", &addnewuser);
 
-            while (addnewuser != 0) // if add new user prompt is true, begin looking for empty profiles
+            do  // if add new user prompt is true, begin looking for empty profiles
             {
                 emptyprofile =  vaxreg_userreg_checkifempty(Profiles, num_usersptr);
 
@@ -230,7 +232,7 @@ void vaxreg_useregistration(struct user *Profiles, int *num_usersptr)
                 }
                 else if (emptyprofile = 0)
                     printf("Maximum number of users reached.\n");
-            }
+            } while (addnewuser != 0)
     }
 
 }
