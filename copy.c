@@ -79,6 +79,53 @@ void display_loading()
     system("cls"); // clears the screen
 }
 
+void printline()
+{
+    printf("**************************\n");
+}
+
+/* void setall_empty(struct user *Profiles)
+{
+    int i;
+    for (i = 0; i <= MAX_USERS; i++)
+    {
+        Profiles[i].userID = 0;
+        Profiles[i].contact = 0;
+        Profiles[i].password[11] = "N/A";
+        Profiles[i].name[21] = "N/A";
+        Profiles[i].address[31] = "N/A";
+        Profiles[i].sex[11] = "N/A";
+        Profiles[i].dose1_date[11] = "N/A";
+        Profiles[i].dose1_type[11] = "N/A";
+        Profiles[i].dose1_loc[11] = "N/A";
+        Profiles[i].dose2_date[11] = "N/A";
+        Profiles[i].dose2_type[11] = "N/A";
+        Profiles[i].dose2_loc[11] = "N/A";
+        Profiles[i].dose3_date[11] = "N/A";
+        Profiles[i].dose3_type[11] = "N/A";
+        Profiles[i].dose3_loc[11] = "N/A";
+    }
+} */
+
+/* void set1_empty(struct user *Profiles, int *num_usersptr, int selectedprofile)
+{
+        Profiles[selectedprofile].userID = 0;
+        Profiles[selectedprofile].contact = 0;
+        Profiles[selectedprofile].password[11] = "N/A";
+        Profiles[selectedprofile].name[21] = "N/A";
+        Profiles[selectedprofile].address[31] = "N/A";
+        Profiles[selectedprofile].sex[11] = "N/A";
+        Profiles[selectedprofile].dose1_date[11] = "N/A";
+        Profiles[selectedprofile].dose1_type[11] = "N/A";
+        Profiles[selectedprofile].dose1_loc[11] = "N/A";
+        Profiles[selectedprofile].dose2_date[11] = "N/A";
+        Profiles[selectedprofile].dose2_type[11] = "N/A";
+        Profiles[selectedprofile].dose2_loc[11] = "N/A";
+        Profiles[selectedprofile].dose3_date[11] = "N/A";
+        Profiles[selectedprofile].dose3_type[11] = "N/A";
+        Profiles[selectedprofile].dose3_loc[11] = "N/A";
+} */
+
 /* Below are subfunctions/menus to be called to preserve code readability. The
 programmer is aware of the amount of pointer variables to be passed within these
 subfunctions. */
@@ -135,7 +182,10 @@ int vaxreg_useregistration(struct user *Profiles, int *num_usersptr)
     int emptyprofile = 0; // stores the return value of vaxreg_userreg_checkifempty
     int idcheck = 0;      // stores the return value of vaxreg_userreg_checkID
     int passcheck = 0;
+
+    printline();
     printf("You are in User Registration.\n");
+    printline();
     fflush(stdin);
 
     if (*num_usersptr < MAX_USERS)
@@ -166,13 +216,17 @@ int vaxreg_useregistration(struct user *Profiles, int *num_usersptr)
                 while (idcheck > 0)
                 {
                     printf(ANSI_RED "Error: userID already taken in Profile %d.\n" ANSI_OFF, idcheck);
+                    sleep(2);
+                    printf("\r");
                     tempid = 0;
                     printf("Enter user ID: ");
                     scanf("%d", &tempid);
                     idcheck = vaxreg_userreg_checkID(Profiles, num_usersptr, tempid);
                 }
 
-                printf(ANSI_GREEN "userID is available.\n" ANSI_OFF);
+                printf(ANSI_GREEN "userID is available." ANSI_OFF);
+                sleep(2);
+                printf("\r");
                 Profiles[emptyprofile].userID = tempid;
 
                 /* int contact */
@@ -186,7 +240,9 @@ int vaxreg_useregistration(struct user *Profiles, int *num_usersptr)
                     passcheck = vaxreg_userreg_checkpasswordlen(Profiles[emptyprofile].password);
 
                     if (passcheck > 10)
-                        printf(ANSI_RED "Error: Password is too long.\n" ANSI_OFF);
+                        printf(ANSI_RED "Error: Password is too long." ANSI_OFF);
+                        sleep(2);
+                        printf("\r");
 
                 } while (passcheck > 10);
 
@@ -197,13 +253,14 @@ int vaxreg_useregistration(struct user *Profiles, int *num_usersptr)
                 /* char name [21] */
                 printf("Enter your first name: ");
                 scanf("%s", firstname);
-                firstname[strcspn(firstname, "\n")] = '\0'; // remove newline character
+                firstname[strlen(firstname) - 1] = '\0';// remove newline character
                 printf("Enter your last name: ");
                 scanf("%s", lastname);
-                lastname[strcspn(lastname, "\n")] = '\0'; // remove newline character
+                lastname[strlen(lastname) - 1] = '\0'; // remove newline character
                 strcat(Profiles[emptyprofile].name, firstname);
                 strcat(Profiles[emptyprofile].name, " ");
                 strcat(Profiles[emptyprofile].name, lastname);
+                printf("\r\rName: %s", Profiles[emptyprofile].name);
                 fflush(stdin); // clears the buffer because of the newline character
 
                 /* char address[31] */
@@ -278,13 +335,13 @@ int vaxreg_useregistration(struct user *Profiles, int *num_usersptr)
                     strcpy(Profiles[emptyprofile].dose3_loc, "N/A");
                 }
                 (*num_usersptr)++;
-            } //else if empty user found
-        } // if addnewuser prompt true
+            } // else if empty user found
+        }     // if addnewuser prompt true
         else
             return 0;
     } // if there are enough users
 
-    else if (*num_usersptr == MAX_USERS)
+    else
     {
         printf("There are %d users.\n", *num_usersptr);
         printf("Maximum number of users reached.\n");
