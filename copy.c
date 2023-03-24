@@ -148,7 +148,7 @@ int vaxreg_useregistration(struct user *Profiles, int *num_usersptr)
         {
             emptyprofile = vaxreg_userreg_checkifempty(Profiles, num_usersptr);
 
-            if (emptyprofile < 0)
+            if (emptyprofile < 0) /* NOTE REMOVE THIS BECAUSE IT WOULDNT MOVE FORWARD ANYWAY F IT WAS FULL */
             {
                 printf("No empty profile found.\n");
                 return 0;
@@ -207,21 +207,82 @@ int vaxreg_useregistration(struct user *Profiles, int *num_usersptr)
                 fflush(stdin); // clears the buffer because of the newline character
 
                 /* char address[31] */
+                printf("Enter address: ");
+                fgets(Profiles[emptyprofile].address, 31, stdin); // fgets is used to read strings with spaces
 
                 /* char sex[11] */
+                printf("Enter sex [M/F]: ");
+                scanf("%s", Profiles[emptyprofile].sex);
 
                 /* char dose1_date[11] */
+                printf("Enter date of your first dose: ");
+                printf(ANSI_BLUE "Date format: 2023-03-16 " ANSI_OFF);
+                scanf("%s", Profiles[emptyprofile].dose1_date);
 
                 /* char dose1_type[11] */
+                printf("Enter brand of vaccine: ");
+                scanf("%s", Profiles[emptyprofile].dose1_type);
 
                 /* char dose1_loc[11] */
+                printf("Enter location of first dose: ");
+                scanf("%s", Profiles[emptyprofile].dose1_loc);
 
                 /* PROMPT FOR MORE DOSES */
-            }
-        }
+                printf("Do you have more than 1 dose? (1 for yes, 0 for no): ");
+                scanf("%d", &second_dose);
+
+                if (second_dose == 1)
+                {
+                    /* dose2_date[11]*/
+                    printf("Enter date of your second dose: ");
+                    printf(ANSI_BLUE "Date format: 2023-03-16 " ANSI_OFF);
+                    scanf("%s", Profiles[emptyprofile].dose2_date);
+                    /* dose2_type[11] */
+                    printf("Enter brand of vaccine: ");
+                    scanf("%s", Profiles[emptyprofile].dose2_type);
+                    /* dose2_loc[11] */
+                    printf("Enter location of second dose: ");
+                    scanf("%s", Profiles[emptyprofile].dose2_loc);
+
+                    /* PROMPT FOR THIRD DOSE */
+                    printf("Do you have more than 2 doses? (0/1): ");
+                    scanf("%d", &third_dose);
+
+                    if (third_dose == 1)
+                    {
+                        /* dose3_date[11] */
+                        printf("Enter date of your third dose: ");
+                        printf(ANSI_BLUE "Date format: 2023-03-16 " ANSI_OFF);
+                        scanf("%s", Profiles[emptyprofile].dose3_date);
+                        /* dose3_type[11] */
+                        printf("Enter brand of vaccine: ");
+                        scanf("%s", Profiles[emptyprofile].dose3_type);
+                        /* dose3_loc[11] */
+                        printf("Enter location of third dose: ");
+                        scanf("%s", Profiles[emptyprofile].dose3_loc);
+                    }
+                    else
+                    { // set dose3_date to null
+                        strcpy(Profiles[emptyprofile].dose3_date, "N/A");
+                        strcpy(Profiles[emptyprofile].dose3_type, "N/A");
+                        strcpy(Profiles[emptyprofile].dose3_loc, "N/A");
+                    }
+                }
+                else
+                { // set dose2and dose3 fields to "N/A"
+                    strcpy(Profiles[emptyprofile].dose2_date, "N/A");
+                    strcpy(Profiles[emptyprofile].dose2_type, "N/A");
+                    strcpy(Profiles[emptyprofile].dose2_loc, "N/A");
+                    strcpy(Profiles[emptyprofile].dose3_date, "N/A");
+                    strcpy(Profiles[emptyprofile].dose3_type, "N/A");
+                    strcpy(Profiles[emptyprofile].dose3_loc, "N/A");
+                }
+                (*num_usersptr)++;
+            } //else if empty user found
+        } // if addnewuser prompt true
         else
             return 0;
-    }
+    } // if there are enough users
 
     else if (*num_usersptr == MAX_USERS)
     {
@@ -345,26 +406,26 @@ int menu_main(struct user *Profiles, int *num_usersptr, struct settings *setptr)
     scanf("%d", &choice);
     printf("\n");
 
-        switch (choice)
-        {
-        case 1: // vax registration
-            system("cls");
-            menu_vaxregistration(Profiles, num_usersptr);
-            break;
-        case 2: // manage data
-            system("cls");
-            menu_datamanagement(Profiles, num_usersptr);
-            break;
-        case 3: // accessibility
-            system("cls");
-            menu_accessibilty(setptr);
-            break;
-        case 4: // exit
-            break;
-        default:
-            system("cls");
-            printf("Invalid input. Please try again.\n");
-        }
+    switch (choice)
+    {
+    case 1: // vax registration
+        system("cls");
+        menu_vaxregistration(Profiles, num_usersptr);
+        break;
+    case 2: // manage data
+        system("cls");
+        menu_datamanagement(Profiles, num_usersptr);
+        break;
+    case 3: // accessibility
+        system("cls");
+        menu_accessibilty(setptr);
+        break;
+    case 4: // exit
+        break;
+    default:
+        system("cls");
+        printf("Invalid input. Please try again.\n");
+    }
 }
 
 /***********************************************************************/
