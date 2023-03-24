@@ -183,6 +183,7 @@ int vaxreg_useregistration(struct user *Profiles, int *num_usersptr)
     int idcheck = 0;      // stores the return value of vaxreg_userreg_checkID
     int passcheck = 0;
 
+    system("cls");
     printline();
     printf("You are in User Registration.\n");
     printline();
@@ -240,9 +241,11 @@ int vaxreg_useregistration(struct user *Profiles, int *num_usersptr)
                     passcheck = vaxreg_userreg_checkpasswordlen(Profiles[emptyprofile].password);
 
                     if (passcheck > 10)
+                    {
                         printf(ANSI_RED "Error: Password is too long." ANSI_OFF);
                         sleep(2);
-                        printf("\r");
+                        printf("\r\r");
+                    }
 
                 } while (passcheck > 10);
 
@@ -253,19 +256,31 @@ int vaxreg_useregistration(struct user *Profiles, int *num_usersptr)
                 /* char name [21] */
                 printf("Enter your first name: ");
                 scanf("%s", firstname);
-                firstname[strlen(firstname) - 1] = '\0';// remove newline character
+                // firstname[strlen(firstname) - 1] = '\0';// remove newline character
+                printf("\r");
                 printf("Enter your last name: ");
                 scanf("%s", lastname);
-                lastname[strlen(lastname) - 1] = '\0'; // remove newline character
+                // lastname[strlen(lastname) - 1] = '\0'; // remove newline character
                 strcat(Profiles[emptyprofile].name, firstname);
                 strcat(Profiles[emptyprofile].name, " ");
                 strcat(Profiles[emptyprofile].name, lastname);
-                printf("\r\rName: %s", Profiles[emptyprofile].name);
+                printf("Name: %s\n", Profiles[emptyprofile].name);
                 fflush(stdin); // clears the buffer because of the newline character
 
                 /* char address[31] */
-                printf("Enter address: ");
-                fgets(Profiles[emptyprofile].address, 31, stdin); // fgets is used to read strings with spaces
+                do
+                {
+                    printf("Enter address: ");
+                    fgets(Profiles[emptyprofile].address, 31, stdin); // fgets is used to read strings with spaces
+
+                    if (strlen(Profiles[emptyprofile].address) > 30)
+                    {
+                        printf(ANSI_RED "Error: Address is too long." ANSI_OFF);
+                        sleep(2);
+                        printf("\r");
+                    }
+
+                } while (strlen(Profiles[emptyprofile].address) < 30);
 
                 /* char sex[11] */
                 printf("Enter sex [M/F]: ");
