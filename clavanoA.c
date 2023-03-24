@@ -232,7 +232,7 @@ void vaxreg_useregistration(struct user *Profiles, int *num_usersptr)
                 }
                 else if (emptyprofile = 0)
                     printf("Maximum number of users reached.\n");
-            } while (addnewuser != 0)
+            } while (addnewuser != 0);
     }
 
 }
