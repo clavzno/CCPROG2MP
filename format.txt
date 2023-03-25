@@ -1,0 +1,166 @@
+/* Naming Conventions */
+
+// Variables
+
+// Functions
+
+// Structures
+struct user {
+	int userID;
+	int contact;
+	char password[11];
+	char name[21];
+	char address[31];
+	char sex[11];
+	char dose1_date[11];
+	char dose1_type[11];
+	char dose1_loc[11];
+	// Optional
+	char dose2_date[11];
+	char dose2_type[11];
+	char dose2_loc[11];
+	char dose3_date[11];
+	char dose3_type[11];
+	char dose3_loc[11];    
+}
+
+struct appointment {
+    int appID;
+    int userID;
+    char name[21];
+    char location[21];
+    char vaccine[11];
+    char date[11];
+    char time[6];
+    char dose[11];
+}
+
+struct faq {
+    char question[81];
+    char answer[81];
+}
+
+struct settings {
+    int bg_color;
+    char about_vaxrdm[81];
+}
+
+// Define Directives
+#define MAX_USERS 100
+
+// typdefs
+typedef char stg6[7];
+typedef char stg10[11];
+typedef char stg20[21];
+typedef char stg30[31];
+
+
+/****************************************************/
+# Required Fields
+
+## User Registration
+int userID
+String password[10]
+String name[20]
+String address[30]
+int contact
+String sex[10]
+String firstdose[10]
+String firstdoseVaccine[10]
+String firstdoseLocation[10]
+String seconddose[10]
+String seconddoseVaccine[10]
+String seconddoseLocation[10]
+String thirddose[10]
+String thirddoseVaccine[10]
+String thirddoseLocation[10]
+
+## Vaccination Appointment
+int appID
+String name[20]
+String location[20]
+String vaccine[10]
+String date[11]
+String time[6]
+String dose[10]
+
+## Chatbot FAQs
+String Question[80]
+String Answer[80]
+
+## Users.txt
+<user1 id><space><password><new line>   
+<name><new line>  
+<address><new line> 
+<contact number><new line>  
+  <sex><new line>   
+<location1><space><date1><space><vaccine1><new line>   
+<location2><space><date2><space><vaccine2><new line>   
+<location3><space><date3><space><vaccine3><new line>   
+<new line>   
+<user2 id><space><password><new line>   
+<name><new line>  
+<address><new line> 
+<contact number><new line>  
+  <sex><new line>   
+<location1><space><date1><space><vaccine1><new line>   
+<location2><space><date2><space><vaccine2><new line>   
+<location3><space>><date3><space><vaccine3><new line>   
+<new line>   
+...   
+<userN id><space><password><new line>   
+<name><new line>  
+<address><new line> 
+<contact number><new line>  
+  <sex><new line>   
+<location1><space><date1><space><vaccine1><new line>   
+<location2><space><date2><space><vaccine2><new line>   
+<location3><space><date3><space><vaccine3><new line>   
+<new line>   
+<eof> 
+
+## Appointment.txt
+<appointment1 id><space><user id><new line>   
+<name><new line>   
+<location><new line>   
+<vaccine><new line>   
+<date><space><new line>   
+<time><new line>   
+<dose><new line>
+<new line>   
+<appointment2 id><space><user id><new line>   
+<name><new line>   
+<location><new line>   
+<vaccine><new line>   
+<date><space><new line>   
+<time><new line>   
+<dose><new line>   
+<new line>   
+...   
+<appointmentN id><space><user id><new line>   
+<name><new line>   
+<location><new line>   
+<vaccine><new line>   
+<date><space><new line>   
+<time><new line>   
+<dose><new line>   
+<new line>   
+<eof>
+
+## Chatbot.txt
+<question1><new line>   
+<answer1><new line>   
+<question2><new line>   
+<answer2><new line>   
+...   
+<questionN><new line>   
+<answerN><new line>   
+<eof>
+
+/*********************************************************************************************************  
+This is to certify that this project is my own work, based on my personal efforts in studying and applying the concepts 
+learned.  I have constructed the functions and their respective algorithms and corresponding code by myself.  The 
+program was run, tested, and debugged by my own efforts.  I further certify that I have not copied in part or whole or 
+otherwise plagiarized the work of other students and/or persons. 
+                                                                                                                 <your full name>, DLSU ID# <number>  
+*********************************************************************************************************/

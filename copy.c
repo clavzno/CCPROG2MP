@@ -2,7 +2,7 @@
 CCPROG2 S18 GROUP <NUMBER>
 Name: Clavano, Angelica Therese I.
 Date created: 2023-02-22
-Last modified: 2023-03-20
+Last modified: 2023-03-25
 
 Notes: (1) won't run in Repl.it console, (2) vsCode Terminal won't show flashing colors, (3) Win11 Terminal shows no difference between bold and non-bold colors.
 (4) exe file crashes when manually selected. (5) runs when F11 in devc++
@@ -26,14 +26,34 @@ main menu and headers when under a certain module. */
 #define ANSI_CYAN "\e[0;96m"   // menu 3: settings
 #define ANSI_OFF "\e[0m"       // removes ANSI code and restores to default text
 // COLOR_OFF to end command; 1 = bold, 5 = slow blink, X = color, m = end of ANSI code
-#define ANSI_PREVLINE "\e[1A" // moves cursor to previous line
 
 /* Define directives for max users since dynamic memory allocation is hard */
 #define MAX_USERS 100
 
-/* Struct delcaration format of user */
-struct user
-{
+/* Struct delcarations */
+struct settings {
+    int bg_color;
+    char about_vaxrdm[81];
+    int cleardata;
+};
+
+struct appointment {
+    int appID;
+    int userID;
+    char name[21];
+    char location[21];
+    char vaccine[11];
+    char date[11];
+    char time[6];
+    char dose[11];    
+}
+
+struct faq {
+    char question[81];
+    char answer[81];
+}
+
+struct user {
     int userID;
     int contact;
     char password[11];
@@ -51,13 +71,10 @@ struct user
     char dose3_date[11];
     char dose3_type[11];
     char dose3_loc[11];
-};
 
-struct settings
-{
-    int remove_blinking;
-    int language;
-    int bg_color;
+    struct appointmentdetails appointments;
+    struct chathistory faq;
+    struct usersettings settings;
 };
 
 /* Extra: Loading Screen Simulation */
@@ -83,48 +100,6 @@ void printline()
 {
     printf("**************************\n");
 }
-
-/* void setall_empty(struct user *Profiles)
-{
-    int i;
-    for (i = 0; i <= MAX_USERS; i++)
-    {
-        Profiles[i].userID = 0;
-        Profiles[i].contact = 0;
-        Profiles[i].password[11] = "N/A";
-        Profiles[i].name[21] = "N/A";
-        Profiles[i].address[31] = "N/A";
-        Profiles[i].sex[11] = "N/A";
-        Profiles[i].dose1_date[11] = "N/A";
-        Profiles[i].dose1_type[11] = "N/A";
-        Profiles[i].dose1_loc[11] = "N/A";
-        Profiles[i].dose2_date[11] = "N/A";
-        Profiles[i].dose2_type[11] = "N/A";
-        Profiles[i].dose2_loc[11] = "N/A";
-        Profiles[i].dose3_date[11] = "N/A";
-        Profiles[i].dose3_type[11] = "N/A";
-        Profiles[i].dose3_loc[11] = "N/A";
-    }
-} */
-
-/* void set1_empty(struct user *Profiles, int *num_usersptr, int selectedprofile)
-{
-        Profiles[selectedprofile].userID = 0;
-        Profiles[selectedprofile].contact = 0;
-        Profiles[selectedprofile].password[11] = "N/A";
-        Profiles[selectedprofile].name[21] = "N/A";
-        Profiles[selectedprofile].address[31] = "N/A";
-        Profiles[selectedprofile].sex[11] = "N/A";
-        Profiles[selectedprofile].dose1_date[11] = "N/A";
-        Profiles[selectedprofile].dose1_type[11] = "N/A";
-        Profiles[selectedprofile].dose1_loc[11] = "N/A";
-        Profiles[selectedprofile].dose2_date[11] = "N/A";
-        Profiles[selectedprofile].dose2_type[11] = "N/A";
-        Profiles[selectedprofile].dose2_loc[11] = "N/A";
-        Profiles[selectedprofile].dose3_date[11] = "N/A";
-        Profiles[selectedprofile].dose3_type[11] = "N/A";
-        Profiles[selectedprofile].dose3_loc[11] = "N/A";
-} */
 
 /* Below are subfunctions/menus to be called to preserve code readability. The
 programmer is aware of the amount of pointer variables to be passed within these
