@@ -182,6 +182,7 @@ int vaxreg_useregistration(struct user *Profiles, int *num_usersptr)
     int emptyprofile = 0; // stores the return value of vaxreg_userreg_checkifempty
     int idcheck = 0;      // stores the return value of vaxreg_userreg_checkID
     int passcheck = 0;
+    int i;
 
     system("cls");
     printline();
@@ -208,6 +209,7 @@ int vaxreg_useregistration(struct user *Profiles, int *num_usersptr)
             else
             {
                 printf(ANSI_GREEN "Empty profile found at index %d.\n" ANSI_OFF, emptyprofile);
+                printf("\r");
 
                 /* int userID */
                 printf("Enter user ID: ");
@@ -233,37 +235,43 @@ int vaxreg_useregistration(struct user *Profiles, int *num_usersptr)
                 /* int contact */
                 printf("Enter contact number: ");
                 scanf("%d", &Profiles[emptyprofile].contact);
+                fflush(stdin);
 
+                /* char password [11] */
                 do
                 {
                     printf("Enter password:" ANSI_BLUE " 10 characters max " ANSI_OFF);
-                    scanf("%s", Profiles[emptyprofile].password);
+                    fgets(Profiles[emptyprofile].password, 11, stdin);
                     passcheck = vaxreg_userreg_checkpasswordlen(Profiles[emptyprofile].password);
 
                     if (passcheck > 10)
                     {
                         printf(ANSI_RED "Error: Password is too long." ANSI_OFF);
                         sleep(2);
-                        printf("\r\r");
+                        printf("\r");
                     }
+
+                    fflush(stdin);
 
                 } while (passcheck > 10);
 
                 printf(ANSI_GREEN "Password is valid." ANSI_OFF);
                 sleep(2);
                 printf("\r");
+                printf("Password: %s\n", Profiles[emptyprofile].password);
 
                 /* char name [21] */
                 printf("Enter your first name: ");
-                scanf("%s", firstname);
-                // firstname[strlen(firstname) - 1] = '\0';// remove newline character
-                printf("\r");
+                fgets(firstname, 11, stdin);
+                firstname[strlen(firstname) - 1] = '\0'; // remove newline character
+                printf("\r\r");
                 printf("Enter your last name: ");
-                scanf("%s", lastname);
-                // lastname[strlen(lastname) - 1] = '\0'; // remove newline character
-                strcat(Profiles[emptyprofile].name, firstname);
-                strcat(Profiles[emptyprofile].name, " ");
-                strcat(Profiles[emptyprofile].name, lastname);
+                fgets(lastname, 11, stdin);
+                lastname[strlen(lastname) - 1] = '\0'; // remove newline character
+                printf("\r\r");
+                strcat(Profiles[emptyprofile].name, firstname); // add first name
+                strcat(Profiles[emptyprofile].name, " ");       // add space between first and last name
+                strcat(Profiles[emptyprofile].name, lastname);  // add last name
                 printf("Name: %s\n", Profiles[emptyprofile].name);
                 fflush(stdin); // clears the buffer because of the newline character
 
@@ -280,7 +288,12 @@ int vaxreg_useregistration(struct user *Profiles, int *num_usersptr)
                         printf("\r");
                     }
 
-                } while (strlen(Profiles[emptyprofile].address) < 30);
+                } while (strlen(Profiles[emptyprofile].address) > 30);
+
+                printf(ANSI_GREEN "Address Saved." ANSI_OFF);
+                sleep(2);
+                printf("\r\r");
+                printf("Address: %s", Profiles[emptyprofile].address);
 
                 /* char sex[11] */
                 printf("Enter sex [M/F]: ");
