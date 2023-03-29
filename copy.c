@@ -51,7 +51,7 @@ struct appointment {
 struct faq {
     char question[81];
     char answer[81];
-}
+};
 
 struct user {
     int userID;
