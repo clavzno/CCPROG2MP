@@ -8,6 +8,8 @@ Notes: (1) won't run in Repl.it console, (2) vsCode Terminal won't show flashing
 (4) exe file crashes when manually selected. (5) runs when F11 in devc++
 *************/
 
+//test 
+
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h> //Required for the display_loading function, alternate is <windows.h>
