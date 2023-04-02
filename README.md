@@ -10,7 +10,7 @@ c. Menu options
 d. Preliminary outline of functions to be created  
 
 
-[] **Milestone 2: March 9**
+[-] **Milestone 2: March 9**
 
 a. User Registration  
 b. Add a User Record  
@@ -21,7 +21,7 @@ f. Add Appointment entries
 g. Book Appointment  
 h. View Appointment entries 
 
-[] **Milestone 3: March 23**
+[-] **Milestone 3: March 23**
 
 a. Manage Appointment details  
 b. Check Appointment Status 
@@ -30,7 +30,7 @@ d. Add entries in Chatbot questions and answers
   page 10 
 e. View Confirmed Appointments 
 
-[] **Milestone 4: March 30** 
+[-] **Milestone 4: March 30** 
 
 a. Export  
 b. Import  
