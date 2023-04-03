@@ -23,7 +23,7 @@ struct appointment {
   Str10 date;
   Str6 time;
   Str10 dose;
-}
+};
 
 struct faq {
   QnA question;
@@ -99,52 +99,58 @@ void displayLine_dash() {
 /**********************************************/
 
 /* Function Prototypes */
+void checkEmpty(); // checks for empty profile and returns iteration for direct
+                   // manipulation of that index
+void checkID();       // checks for any repeated IDs
+void checkPassword(); // makes the user confirm their entered password
 
 // I. Main Menu:
-void mainmenu()
-    // Vaccination Registration Menu
-    void registration()
-    // User Registration
-    void reg_User()
-    // Vaccination Appointment
-    void reg_Appt()
-    // Chatbot FAQs
-    void reg_Chat()
-    // Exit
-    void reg_Exit()
-    // II. Data Management Menu
-    void management()
-    // User
-    void mng_User()
-    // Add new user
-    void mng_User_Add()
-    // View all users
-    void mng_User_View()
-    // Edit User details
-    void mng_User_Edit()
-    // Delete User
-    void mng_User_Delete()
-    // Exit (goes back to data management menu)
-    // Appointment
-    void mng_appointment()
-    // Add new appt (redundant with register?)
-    // void mng_Appt_add()
-    // View all appts
-    void mng_Appt_View()
-    // Edit Appt
-    void mng_Appt_Edit()
-    // Delete Appt
-    void mng_Appt_Delete()
-    // Exit (goes back to data management menu)
-    //[Admin]Chatbot
-    void mng_Chat()
+void mainmenu(struct *userProfilesptr, struct *userAmountptr);
+  // Vaccination Registration Menu
+  void registration(struct *userProfilesptr);
+    // 1. User Registration
+    void reg_User();
+    // 2. Vaccination Appointment
+    void reg_Appt();
+    // 3. Chatbot FAQs
+    void reg_Chat();
+    // 4. Exit      
+    void reg_Exit();
+  // II. Data Management Menu
+  void management();
+    // 1.0 User
+    void mng_User();
+      // 1.1 Add new user
+      void mng_User_Add();
+      // 1.2 View all users
+      void mng_User_View();
+      // 1.3 Edit User details
+      void mng_User_Edit();
+      // 1.4 Delete User
+      void mng_User_Delete();
+      // 1.5 Exit (goes back to data management menu)
+      void mng_User_Exit();
+    // 2.0 Appointment
+    void mng_appointment();
+      // Add new appt (redundant with register?)
+      // void mng_Appt_add()
+      // View all appts
+      void mng_Appt_View();
+      // Edit Appt
+      void mng_Appt_Edit();
+      // Delete Appt
+      void mng_Appt_Delete();
+      // Exit (goes back to data management menu)
+      void mng_Appt_Exit();
+  //[Admin]Chatbot
+  void mng_Chat();
     // Add New QnA
     // View all QnA
     // Delete QnA
     // Exit (goes back to data management menu)
-    // Export
-    void mng_Export()
-    // Import
-    void mng_Import()
-    // Exit (saves all updates and terminates program)
-    void mng_Exit()
+  // Export
+  void mng_Export();
+  // Import
+  void mng_Import();
+  // Exit (saves all updates and terminates program)
+  void mng_Exit();
