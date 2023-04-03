@@ -9,9 +9,9 @@ Date Merged: 2023-04-02
 #include "cdg.h"
 
 void mainmenu(struct *userProfilesptr, struct *userAmountptr) {
-	int choice;
-	printf("TEST HELLO WORLD PLEASE TELL ME THIS WORKS");
-	return 0;
+  int choice;
+
+  return 0;
 }
 
 int main() {
@@ -22,5 +22,6 @@ int main() {
 
   displayLoading();
   mainmenu(userProfilesptr, userAmountptr);
+  displayExit();
   return 0;
 }

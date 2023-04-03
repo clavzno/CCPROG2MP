@@ -1,6 +1,9 @@
 compile = "make -s"
-run = "./main"
+# run = "./main"
 hidden = ["main", "main-debug", "**/*.o", "**/*.d", ".ccls-cache", "Makefile"]
+# added 
+language='c'
+run='make create && ./main.o'
 
 [nix]
 channel = "stable-22_11"
