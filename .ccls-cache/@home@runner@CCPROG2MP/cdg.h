@@ -107,7 +107,7 @@ void checkPassword(); // makes the user confirm their entered password
 // I. Main Menu:
 void mainmenu(struct *userProfilesptr, struct *userAmountptr);
   // Vaccination Registration Menu
-  void registration(struct *userProfilesptr);
+  void registration(struct *userProfilesptr, struct *userAmountptr);
     // 1. User Registration
     void reg_User();
     // 2. Vaccination Appointment
