@@ -117,7 +117,7 @@ void mainmenu(struct *userProfilesptr, struct *userAmountptr);
     // 4. Exit      
     void reg_Exit();
   // II. Data Management Menu
-  void management();
+  void management(struct *userProfilesptr, struct *userAmountptr);
     // 1.0 User
     void mng_User();
       // 1.1 Add new user
