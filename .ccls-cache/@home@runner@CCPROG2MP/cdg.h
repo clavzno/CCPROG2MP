@@ -57,18 +57,14 @@ struct user {
 /* Define directives for cosmetic purposes in the program such as the
 main menu and headers when under a certain module. */
 // \e == (Esc)ape code, [ for ANSI code, m for end of ANSI code
-#define ANSI_FLASH_RED "\e[0;6;31m"
-#define ANSI_FLASH_BLUE "\e[0;6;34m"
-#define ANSI_FLASH_WHITE "\e[0;6;1m"
+#define ANSI_WHITE "\e[0;1m" //default 
 #define ANSI_RED "\e[0;31m"  // FOR ERRORS
 #define ANSI_BLUE "\e[0;34m" // FOR TIPS
-#define ANSI_WHITE "\e[0;1m"
 #define ANSI_YELLOW "\e[0;93m" // menu 1: vaccination registration
 #define ANSI_GREEN "\e[0;92m"  // menu 2: data management
 #define ANSI_CYAN "\e[0;96m"   // menu 3: settings
 #define ANSI_OFF "\e[0m"       // removes ANSI code and restores to default text
-// COLOR_OFF to end command; 1 = bold, 5 = slow blink, X = color, m = end of
-// ANSI code
+// COLOR_OFF to end command; 1 = bold, 5 = slow blink, X = color, m = end of ANSI code
 #define ANSI_PREVLINE "\e[1A" // moves cursor to previous line
 
 /**********************************************/
@@ -90,67 +86,62 @@ void displayLoading() {
   system("cls"); // clears the screen
 }
 
-void displayLine_ast() { printf("**************************\n"); }
-
-void displayLine_dash() {
-  printf("\n------------------------------------------\n");
-}
+void displayLine_ast() { printf("**********************************************************\n"); } //58 characters
 
 /**********************************************/
 
 /* Function Prototypes */
-void checkEmpty(); // checks for empty profile and returns iteration for direct
-                   // manipulation of that index
-void checkID();       // checks for any repeated IDs
-void checkPassword(); // makes the user confirm their entered password
 
 // I. Main Menu:
 void mainmenu(struct *userProfilesptr, struct *userAmountptr);
   // Vaccination Registration Menu
   void registration(struct *userProfilesptr, struct *userAmountptr);
     // 1. User Registration
-    void reg_User();
+		void reg_User(struct *userProfilesptr, struct *userAmountptr);
+		void checkEmpty(struct *userProfilesptr, struct *userAmountptr); // checks for empty profile and returns iteration for direct manipulation of that index
+		void checkID(int id, struct *userAmountptr);       // checks for any repeated IDs
+		void checkPassword(char password[], struct *userAmountptr); // makes the user confirm their entered password
     // 2. Vaccination Appointment
-    void reg_Appt();
+    void reg_Appt(struct *userProfilesptr, struct *userAmountptr);
     // 3. Chatbot FAQs
-    void reg_Chat();
+    void reg_Chat(struct *userProfilesptr, struct *userAmountptr);
     // 4. Exit      
-    void reg_Exit();
-  // II. Data Management Menu
+    void reg_Exit(struct *userProfilesptr, struct *userAmountptr);
+  // II. Data Management Menu [Admin]
   void management(struct *userProfilesptr, struct *userAmountptr);
     // 1.0 User
-    void mng_User();
+    void mng_User(struct *userProfilesptr, struct *userAmountptr);
       // 1.1 Add new user
-      void mng_User_Add();
+      void mng_User_Add(struct *userProfilesptr, struct *userAmountptr);
       // 1.2 View all users
-      void mng_User_View();
+      void mng_User_View(struct *userProfilesptr, struct *userAmountptr);
       // 1.3 Edit User details
-      void mng_User_Edit();
+      void mng_User_Edit(struct *userProfilesptr, struct *userAmountptr);
       // 1.4 Delete User
-      void mng_User_Delete();
+      void mng_User_Delete(struct *userProfilesptr, struct *userAmountptr);
       // 1.5 Exit (goes back to data management menu)
-      void mng_User_Exit();
+      void mng_User_Exit(struct *userProfilesptr, struct *userAmountptr);
     // 2.0 Appointment
-    void mng_appointment();
+    void mng_appointment(struct *userProfilesptr, struct *userAmountptr);
       // Add new appt (redundant with register?)
       // void mng_Appt_add()
       // View all appts
-      void mng_Appt_View();
+      void mng_Appt_View(struct *userProfilesptr, struct *userAmountptr);
       // Edit Appt
-      void mng_Appt_Edit();
+      void mng_Appt_Edit(struct *userProfilesptr, struct *userAmountptr);
       // Delete Appt
-      void mng_Appt_Delete();
+      void mng_Appt_Delete(struct *userProfilesptr, struct *userAmountptr);
       // Exit (goes back to data management menu)
-      void mng_Appt_Exit();
+      void mng_Appt_Exit(struct *userProfilesptr, struct *userAmountptr);
   //[Admin]Chatbot
-  void mng_Chat();
+  void mng_Chat(struct *userProfilesptr, struct *userAmountptr);
     // Add New QnA
     // View all QnA
     // Delete QnA
     // Exit (goes back to data management menu)
   // Export
-  void mng_Export();
+  void mng_Export(struct *userProfilesptr, struct *userAmountptr);
   // Import
-  void mng_Import();
+  void mng_Import(struct *userProfilesptr, struct *userAmountptr);
   // Exit (saves all updates and terminates program)
-  void mng_Exit();
+  void mng_Exit(struct *userProfilesptr, struct *userAmountptr);

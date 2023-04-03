@@ -167,7 +167,33 @@ otherwise plagiarized the work of other students and/or persons.
 
 
 
-
+//ASSISTIVAX COLORS
 
 //MAIN MENU DESIGN
+**********************************************************
+Welcome to AssistiVAX! Your Personal Vaccination Assistant
 
+Choose your option:
+[1] User Registration
+[2] Schedule an Appointment
+[3] Talk with AssistiVAX
+[4] Exit
+
+**********************************************************
+Enter your choice below:
+> 
+
+
+//MAIN MENU DESIGN 2
+----------------------------------------------------------
+Welcome to AssistiVAX! Your Personal Vaccination Assistant
+
+Choose your option:
+[1] User Registration
+[2] Schedule an Appointment
+[3] Talk with AssistiVAX
+[4] Exit
+
+----------------------------------------------------------
+Enter your choice below:
+> 

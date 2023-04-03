@@ -6,12 +6,14 @@ De Grano, Justin Patrick
 Date Created: 2023-03-22
 Date Merged: 2023-04-02
 ***************/
+
+/* Necessary Library & Header Files */
 #include "cdg.h"
 
 void mainmenu(struct *userProfilesptr, struct *userAmountptr) {
-	int choice;
-	printf("TEST HELLO WORLD PLEASE TELL ME THIS WORKS");
-	return 0;
+  int choice;
+  return 0;
+  printf("Hello World!");
 }
 
 int main() {
@@ -20,7 +22,7 @@ int main() {
   int userAmount = 0;
   int *userAmountptr = &userAmount; // to ensure access bc c is weird
 
-  displayLoading();
+  // display_loading();
   mainmenu(userProfilesptr, userAmountptr);
   return 0;
 }
