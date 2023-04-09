@@ -9,8 +9,7 @@ b. Collection of data needed for the project
 c. Menu options   
 d. Preliminary outline of functions to be created  
 
-
-[-] **Milestone 2: March 9**
+[x] **Milestone 2: March 9**
 
 a. User Registration  
 b. Add a User Record  
@@ -21,7 +20,7 @@ f. Add Appointment entries
 g. Book Appointment  
 h. View Appointment entries 
 
-[-] **Milestone 3: March 23**
+[x] **Milestone 3: March 23**
 
 a. Manage Appointment details  
 b. Check Appointment Status 
@@ -30,12 +29,12 @@ d. Add entries in Chatbot questions and answers
   page 10 
 e. View Confirmed Appointments 
 
-[-] **Milestone 4: March 30** 
+[x] **Milestone 4: March 30** 
 
 a. Export  
 b. Import  
 
-[] **Milestone 5: April 4**  
+[-] **Milestone 5: April 4**  
 
 a. Integrated testing (as a whole, not per function/feature)  
 b. Collect and verify versions of code and documents that will be uploaded  

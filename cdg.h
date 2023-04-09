@@ -9,11 +9,21 @@
 #define MAX_APPOINTMENTS 10
 
 /* TYPEDEFs */
-typedef char Str6[7];
-typedef char Str10[11];
-typedef char Str20[21];
-typedef char Str30[31];
-typedef char QnA[81]; // for faq
+typedef char Str6[7]; // 6 characters + null terminator
+typedef char Str10[11]; // 10 characters + null terminator
+typedef char Str20[21]; // 20 characters + null terminator
+typedef char Str30[31]; // 30 characters + null terminator
+typedef char QnA[81]; // 80 characters + null terminator
+
+/* UI COLORS */
+// \e == (Esc)ape code, [ for ANSI code, m for end of ANSI code
+#define ANSI_WHITE "\e[0;1m"   // default
+#define ANSI_RED "\e[0;31m"    // FOR ERRORS
+#define ANSI_BLUE "\e[0;34m"   // FOR TIPS
+#define ANSI_YELLOW "\e[0;93m" // menu 1: vaccination registration
+#define ANSI_GREEN "\e[0;92m"  // menu 2: data management
+#define ANSI_CYAN "\e[0;96m"   // menu 3: settings
+#define ANSI_OFF "\e[0m"       // removes ANSI code and restores to default text
 
 /* STRUCTS */
 // stores appointment details per user
@@ -49,14 +59,22 @@ struct user
   struct faq chathistory;
 };
 
-/* UI Functions and define directives for cosmetics */
-// \e == (Esc)ape code, [ for ANSI code, m for end of ANSI code
-#define ANSI_RED "\e[0;31m"    // FOR ERRORS
-#define ANSI_BLUE "\e[0;34m"   // FOR TIPS
-#define ANSI_YELLOW "\e[0;93
-#define ANSI_GREEN "\e[0;92m
-#define ANSI_CYAN "\e[0;96
-#define ANSI_OFF "\e[0m"       
+// empty struct
+struct empty_struct
+{
+  int userID;
+  Str10 password;
+  Str20 name;
+  char contact[12];
+  Str30 address;
+  Str10 sex;
+  Str10 dose1_date, dose1_type, dose1_loc;
+  Str10 dose2_date, dose2_type, dose2_loc;
+  Str10 dose3_date, dose3_type, dose3_loc;
+
+  struct appointment appdetails[MAX_APPOINTMENTS];
+  struct faq chathistory;
+};    
 
 /************************************************************/
 
@@ -133,14 +151,14 @@ void displayPassword_ast(Str10 password)
     }
   }
 }
+
 /************************************************************/
 
-
-/* Check Functions */ // note: to move above under functions that use it below
+/* Check Functions */
 
 // Checks for iteration where there is an empty profile, returns index
 
-int checkEmpty(struct user *userProfilesptr, int *userAmountptr)
+int checkEmptyIndex(struct user *userProfilesptr, int *userAmountptr)
 {
   int i;
   for (i = 0; i < *userAmountptr; i++)
@@ -152,8 +170,7 @@ int checkEmpty(struct user *userProfilesptr, int *userAmountptr)
   }
 }
 
-// Checks if entered ID is available, returns 1 if available, 0 if not
-
+// Checks if entered ID is available, returns 1 if available, 0 if not - Note: each ID has to be unique
 int checkID(struct user *userProfilesptr, int *userAmountptr, int tempid)
 {
   int i;
@@ -269,8 +286,9 @@ void setNull(struct user *userProfilesptr, int *userAmountptr)
 /* FUNCTION PROTOTYPES */
 
 // [0] MAIN MENU (in cdc.c)
-int mainmenu(struct user *userProfilesptr, int *userAmountptr, int *apptAmountptr);
+//int mainmenu(struct user *userProfilesptr, int *userAmountptr, int *apptAmountptr);
 
+/************************************************************/
 // [1] VACCINATION REGISTRATION
 
 // 1.1 User Registration
@@ -283,7 +301,7 @@ void reg_User(struct user *userProfilesptr, int *userAmountptr)
   int secondDose, thirdDose;
   char confirmPass[11];
 
-  userIndex = checkEmpty(userProfilesptr, userAmountptr);
+  userIndex = checkEmptyIndex(userProfilesptr, userAmountptr);
   printf("Empty profile found at index %d\n", userIndex);
 
   printf("User Registration\n"
@@ -533,6 +551,7 @@ void reg_Appt(struct user *userProfilesptr, int *userAmountptr, int *apptAmountp
   printf("Dose: %s", userProfilesptr[validID].appdetails->dose);
 }
 
+/************************************************************/
 // [2] CHATBOT/FAQS
 
 // Sub function for printf questions
@@ -628,14 +647,14 @@ int reg_Chat(struct user *userProfilesptr, int *userAmountptr)
 // [3] ADMIN/DATA MANAGEMENT
 
 // MAIN MENU FOR ADMIN
+// to grant access to the module, the user must log in using the userID and password (hidden)
+// user is granted 3 attempts to log in, otherwise terminate program
 int management(struct user *userProfilesptr, int *userAmountptr, int *apptAmountptr);
 
 
 
-
-
 // 3.1 USER DATA MENU (in cdg.c)
-int mng_User(struct user *userProfilesptr, int *userAmountptr);
+//int mng_User(struct user *userProfilesptr, int *userAmountptr);
 
 // Sub function: View User ID List
 void mng_userView(struct user *userProfilesptr, int *userAmountptr)
@@ -675,7 +694,7 @@ void mng_User_Add(struct user *userProfilesptr, int *userAmountptr)
   int secondDose, thirdDose;
   char confirmPass[11];
 
-  userIndex = checkEmpty(userProfilesptr, userAmountptr);
+  userIndex = checkEmptyIndex(userProfilesptr, userAmountptr);
   printf("Empty profile found at index %d\n", userIndex);
 
   // int userID
@@ -950,7 +969,7 @@ int mng_User_Delete(struct user *userProfilesptr, int *userAmountptr)
 
 
 // 3.2 APPOINTMENT DATA MENU (in cdg.c)
-int mng_Appt(struct user *userProfilesptr, int *userAmountptr, int *apptAmountptr);
+//int mng_Appt(struct user *userProfilesptr, int *userAmountptr, int *apptAmountptr);
 
 // Appt Data > [1] Add appointment
 void mng_Appt_Add(struct user *userProfilesptr, int *userAmountptr, int *apptAmountptr)
@@ -1133,7 +1152,7 @@ int mng_Appt_Exit();
 
 
 // 3.3 CHATBOT DATA MENU (in cdg.c)
-int mng_Chat(struct user *userProfilesptr, int *userAmountptr);
+//int mng_Chat(struct user *userProfilesptr, int *userAmountptr);
 
 // Chatbot Data > [1] Add chatbot data
 int mng_Chat_Add();
@@ -1150,7 +1169,7 @@ int mng_Chat_Delete();
 
 
 // 3.4 DATA FILES MENU (in cdg.c)
-int mng_ChoosePort(struct user *userProfilesptr, int *userAmountptr, int *apptAmountptr);
+//int mng_ChoosePort(struct user *userProfilesptr, int *userAmountptr, int *apptAmountptr);
 
 // Import/Export Data > [1] Import data
 void mng_Import(struct user *userProfilesptr, int *userAmountptr)

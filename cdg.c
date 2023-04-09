@@ -12,44 +12,68 @@ Date Updated: 2023-04-08
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>`
+#include <unistd.h>
 
 // Data Management Menu [Admin]
 int mng_Chat(struct user *userProfilesptr, int *userAmountptr)
 {
-  int choice;
-  printf("Choose an option:\n");
-  printf("[1] Add New QnA\n");
-  printf("[2] View all QnA\n");
-  printf("[3] Delete QnA\n");
-  printf("[4] Exit\n");
-  printf("Choice: ");
-  scanf("%d", &choice);
+	int choice;
+	do
+	{
+		printf("Choose an option:\n");
+		printf("[1] Add New QnA\n");
+		printf("[2] View all QnA\n");
+		printf("[3] Delete QnA\n");
+		printf("[4] Exit\n");
+		printf("Choice: ");
+		scanf("%d", &choice);
 
-  switch (choice)
-  {
-  case 1:
-  case 2:
-  case 3:
-  case 4:
-  {
-    return 0;
-  }
-  }
+		switch (choice)
+		{
+		case 1:
+		{
+			/*Add vaccination FAQ question and answer in the chatbot text file. Your program will ask the admin if  they want to add another  question and answer or go back to the Chatbot menu.*/
+			mng_Chat_Add(userProfilesptr, userAmountptr);
+			break;
+		}
+		case 2:
+		{
+			/* This feature shows all the questions and answers for the chatbot. The program goes back to the Chatbot menu after viewing the Chatbot questions and answers*/
+			mng_Chat_View(userProfilesptr, userAmountptr);
+			break;
+		}
+		case 3:
+		{
+			/* This will allow the admin to edit questions and answers in the chatbot text file. Your program will ask the admin if they want to edit another  question and answer or go back to the Chatbot menu.*/
+			mng_Chat_Edit(userProfilesptr, userAmountptr);
+		}
+		case 4:
+		{
+			/* This  will  allow  the  admin  to  delete  questions  and  answers  in  the chatbot text file. Your program will ask the admin if they want to delete another question and answer page 5 or go back to the Chatbot menu.*/
+			mng_Chat_Delete(userProfilesptr, userAmountptr);
+			break;
+		}
+		case 5:
+		{
+			/*  The  exit  option  allows  the  user  to  quit  the  Chatbot  menu.  The  program  goes  back  to  the  Data Management  Menu. */
+			return 0;
+		}
+		}
+	} while (choice != 5);
 }
 
 int mng_ChoosePort(struct user *userProfilesptr, int *userAmountptr, int *apptAmountptr)
 {
 	int choice;
-	printf("Choose an option:\n");
-	printf("[1] Import\n");
-	printf("[2] Export\n");
-	printf("[3] Exit\n");
-	printf("Choice: ");
-	scanf("%d", &choice);
-
 	do
 	{
+		printf("Choose an option:\n");
+		printf("[1] Import\n");
+		printf("[2] Export\n");
+		printf("[3] Exit\n");
+		printf("Choice: ");
+		scanf("%d", &choice);
+
 		switch (choice)
 		{
 		case 1:
@@ -65,7 +89,7 @@ int mng_ChoosePort(struct user *userProfilesptr, int *userAmountptr, int *apptAm
 		case 3:
 		{
 			return 0;
-			//mng_Exit(userProfilesptr, userAmountptr);
+			// mng_Exit(userProfilesptr, userAmountptr);
 			break;
 		}
 		}
@@ -75,40 +99,45 @@ int mng_ChoosePort(struct user *userProfilesptr, int *userAmountptr, int *apptAm
 int mng_User(struct user *userProfilesptr, int *userAmountptr)
 {
 	int choice;
-	printf("User Data\n\n");
-	printf("[1] Add new user\n"
-		   "[2] View all users\n"
-		   "[3] Edit User details\n"
-		   "[4] Delete User\n"
-		   "[5] Return to Data Management\n\n");
-	scanf("%d", &choice);
-
 	do
 	{
+		printf("User Data\n\n");
+		printf("[1] Add new user\n"
+			   "[2] View all users\n"
+			   "[3] Edit User details\n"
+			   "[4] Delete User\n"
+			   "[5] Return to Data Management\n\n");
+		scanf("%d", &choice);
+
 		switch (choice)
 		{
 		case 1:
 		{
+			/* Add new user details that includes userID, password, name, address, contact, sex, first dose, first dose vaccine, first dose location, second dose, second dose vaccine, booster dose and booster dose vaccine. Your program will ask the admin if they want to add another user or go back to the User menu. */
 			mng_User_Add(userProfilesptr, userAmountptr);
 			break;
 		}
 		case 2:
 		{
+			/* View all the users arranged by user ID. The display should be in table format in the following sequence: userID, name, address, contact, sex,  first  dose,  first  dose  vaccine,  first  dose  location,    second dose, second dose vaccine, booster dose and booster dose vaccine. The program goes back to the User menu after viewing the User details.*/
 			mng_User_View(userProfilesptr, userAmountptr);
 			break;
 		}
 		case 3:
 		{
+			/* Edit  new  user  details  that  includes  userID,  name,  address, contact,  sex,  first  dose, first dose vaccine, first dose location, second dose, second dose vaccine, booster dose and booster dose vaccine.  Your  program  will ask  the  admin  if  they  want  to  edit  another  user  details  or  go  back  to  the User menu */
 			mng_User_Edit(userProfilesptr, userAmountptr);
 			break;
 		}
 		case 4:
 		{
+			/* Delete user details from the text file. Your program will ask the admin if they want to delete another user details or go back to the User menu */
 			mng_User_Delete(userProfilesptr, userAmountptr);
 			break;
 		}
 		case 5:
 		{
+			/* The  exit  option  allows  the  user  to  quit  the  User  menu.  The  program  goes  back  to  the  Data Management  Menu*/
 			return 0;
 		}
 		}
@@ -117,42 +146,46 @@ int mng_User(struct user *userProfilesptr, int *userAmountptr)
 
 int mng_Appt(struct user *userProfilesptr, int *userAmountptr, int *apptAmountptr)
 {
-
 	int choice;
-	printf("User Data\n\n");
-	printf("[1] Add new Appointments\n"
-		   "[2] View all Appointments\n"
-		   "[3] Edit Appointments\n"
-		   "[4] Delete Appointments\n"
-		   "[5] Return to Data Management\n\n");
-	scanf("%d", &choice);
-
 	do
 	{
+		printf("User Data\n\n");
+		printf("[1] Add new Appointments\n"
+			   "[2] View all Appointments\n"
+			   "[3] Edit Appointments\n"
+			   "[4] Delete Appointments\n"
+			   "[5] Return to Data Management\n\n");
+		scanf("%d", &choice);
+
 		switch (choice)
 		{
 		case 1:
 		{
+			/* Add new appointment details that includes appID, name, location, vaccine, date and time. Your program will ask the admin if they want to add another  appointment or  go back to the Appointment menu.*/
 			mng_Appt_Add(userProfilesptr, userAmountptr, apptAmountptr);
 			break;
 		}
 		case 2:
 		{
+			/* View all the appointments by the users. The display should be in table format in the following  sequence:  appID, name, location,  vaccine,  date  and  time.  The program goes  back  to  the Appointment menu after viewing the Appointment details.*/
 			mng_Appt_View(userProfilesptr, userAmountptr, apptAmountptr);
 			break;
 		}
 		case 3:
 		{
+			/* Edit the details of the appointment that includes appID, name, location, vaccine, date and time. Your program will ask the admin if they want to edit another appointment details or go back to the Appointment menu.*/
 			mng_Appt_Edit(userProfilesptr, userAmountptr, apptAmountptr);
 			break;
 		}
 		case 4:
 		{
+			/* Cancel  an  appointment  by  deleting  it  from  the  list  of  appointments.  Your program will ask the admin if they want to delete another appointment or go back to the Appointment menu. */
 			mng_Appt_Delete(userProfilesptr, userAmountptr, apptAmountptr);
 			break;
 		}
 		case 5:
 		{
+			/* The  exit  option  allows  the  user  to  quit  the  Appointment  menu.  The  program  goes  back to  the Data Management  Menu. */
 			return 0;
 		}
 		}
@@ -161,7 +194,7 @@ int mng_Appt(struct user *userProfilesptr, int *userAmountptr, int *apptAmountpt
 
 int management(struct user *userProfilesptr, int *userAmountptr, int *apptAmountptr)
 {
-	int choice = 0;
+	int choice;
 
 	do
 	{
@@ -206,7 +239,7 @@ int management(struct user *userProfilesptr, int *userAmountptr, int *apptAmount
 		{
 			system("cls");
 			return 0;
-			//mng_Exit(userProfilesptr, userAmountptr);
+			// mng_Exit(userProfilesptr, userAmountptr);
 			break;
 		}
 		default:
@@ -214,7 +247,7 @@ int management(struct user *userProfilesptr, int *userAmountptr, int *apptAmount
 			printf(ANSI_RED "Error: Invalid Choice\n" ANSI_OFF);
 			sleep(2);
 			system("cls");
-			mainmenu(userProfilesptr, userAmountptr, apptAmountptr);
+			return 0; //goes back to main menu
 		}
 		} // end switch case
 	} while (choice != 5);
@@ -224,7 +257,7 @@ int mainmenu(struct user *userProfilesptr, int *userAmountptr, int *apptAmountpt
 {
 
 	int choice = 0;
-	int emptyprofile = checkEmpty(userProfilesptr, userAmountptr); // checks and return empty index
+	int emptyprofile = checkEmptyIndex(userProfilesptr, userAmountptr); // checks and return empty index
 
 	do
 	{
@@ -293,26 +326,42 @@ int mainmenu(struct user *userProfilesptr, int *userAmountptr, int *apptAmountpt
 	return 0;
 }
 
+/* int main()
+{
+	struct user *userProfiles = NULL; // pointer to user profiles array
+	int userAmount = 0;				  // amount of users registered
+	int *userAmountptr = &userAmount; // pointer to amount of users registered
+	int apptAmount = 0;				  // amount of appointments made
+	int *apptAmountptr = &apptAmount; // pointer to the amount of appointments made
+
+	userProfiles = (struct user *)malloc(MAX_USERS * sizeof(struct user)); // allocate memory for the userProfiles array
+
+	if (userProfiles == NULL)
+	{ // check if the memory allocation was successful
+		printf("Error: Unable to allocate memory for user profiles\n");
+		return 1;
+	}
+
+	// displayLoading();
+	mainmenu(userProfiles, userAmountptr, apptAmountptr);
+	displayExit();
+
+	free(userProfiles); // free the memory allocated for the userProfiles array
+
+	return 0;
+} */
+
 int main()
 {
-    struct user *userProfiles = NULL;       // pointer to user profiles array
-    int userAmount = 0;                     // amount of users registered
-    int *userAmountptr = &userAmount;       // pointer to amount of users registered
-    int apptAmount = 0;                     // amount of appointments made
-    int *apptAmountptr = &apptAmount;       // pointer to the amount of appointments made
+	struct user userProfiles[MAX_USERS];		 // array of user profiles
+	struct user *userProfilesptr = userProfiles; // pointer to user profiles array
+	int userAmount = 0;							 // amount of users registered
+	int *userAmountptr = &userAmount;			 // pointer to amount of users registered
+	int apptAmount = 0;							 // amount of appointments made
+	int *apptAmountptr = &apptAmount;			 // pointer to the amount of appointments made
 
-    userProfiles = (struct user *) malloc(MAX_USERS * sizeof(struct user)); // allocate memory for the userProfiles array
-
-    if (userProfiles == NULL) {  // check if the memory allocation was successful
-        printf("Error: Unable to allocate memory for user profiles\n");
-        return 1;
-    }
-
-    // displayLoading();
-    mainmenu(userProfiles, userAmountptr, apptAmountptr);
-    displayExit();
-
-    free(userProfiles); // free the memory allocated for the userProfiles array
-
-    return 0;
+	// displayLoading();
+	mainmenu(userProfilesptr, userAmountptr, apptAmountptr);
+	displayExit();
+	return 0;
 }

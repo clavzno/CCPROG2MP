@@ -48,7 +48,7 @@ struct appointment {
   char date[11];
   char time[6];
   char dose[11];
-}
+};
 
 struct faq {
   char question[81];
@@ -74,9 +74,9 @@ struct user {
   char dose3_type[11];
   char dose3_loc[11];
 
-  struct appointmentdetails appointments;
-  struct chathistory faq;
-  struct usersettings settings;
+  struct appointment appointmentdetails;
+  struct faq chathistory;
+  struct settings usersettings;
 };
 
 /* Extra: Loading Screen Simulation */

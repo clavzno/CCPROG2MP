@@ -9,7 +9,7 @@ Date Updated: 2023-04-08
 
 ***************/
 
-#include "cdg.h"
+#include "oldcdg.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -194,7 +194,7 @@ int management(struct user *userProfilesptr, int *userAmountptr, int *apptAmount
 			printf(ANSI_RED "Error: Invalid Choice\n" ANSI_OFF);
 			sleep(2);
 			system("cls");
-			mainmenu(userProfilesptr, userAmountptr, apptAmountptr);
+			return 0; // return to main menu
 		}
 		} // end switch case
 	} while (choice != 5);
