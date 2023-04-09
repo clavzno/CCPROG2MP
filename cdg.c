@@ -6,14 +6,13 @@ De Grano, Justin Patrick
 Date Created: 2023-03-22
 Date Merged: 2023-04-02
 Date Updated: 2023-04-08
-
 ***************/
 
 #include "cdg.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
+#include <unistd.h>`
 
 // Data Management Menu [Admin]
 int mng_Chat(struct user *userProfilesptr, int *userAmountptr)
