@@ -16,29 +16,8 @@ Date Updated: 2023-04-08
 #include <unistd.h>
 
 // Data Management Menu [Admin]
-int mng_Chat(struct user *userProfilesptr, int *userAmountptr)
-{
-  int choice;
-  printf("Choose an option:\n");
-  printf("[1] Add New QnA\n");
-  printf("[2] View all QnA\n");
-  printf("[3] Delete QnA\n");
-  printf("[4] Exit\n");
-  printf("Choice: ");
-  scanf("%d", &choice);
 
-  switch (choice)
-  {
-  case 1:
-  case 2:
-  case 3:
-  case 4:
-  {
-    return 0;
-  }
-  }
-}
-
+// Import/Export
 int mng_ChoosePort(struct user *userProfilesptr, int *userAmountptr, int *apptAmountptr)
 {
 	int choice;
@@ -282,6 +261,7 @@ int mainmenu(struct user *userProfilesptr, int *userAmountptr, int *apptAmountpt
 		}
 		default:
 		{
+			printf(ANSI_REPEATCHOICE);
 			printf(ANSI_RED "Error: Invalid Choice\n" ANSI_OFF);
 			sleep(2);
 			system("cls");
@@ -296,24 +276,15 @@ int mainmenu(struct user *userProfilesptr, int *userAmountptr, int *apptAmountpt
 
 int main()
 {
-    struct user *userProfiles = NULL;       // pointer to user profiles array
-    int userAmount = 0;                     // amount of users registered
-    int *userAmountptr = &userAmount;       // pointer to amount of users registered
-    int apptAmount = 0;                     // amount of appointments made
-    int *apptAmountptr = &apptAmount;       // pointer to the amount of appointments made
+	struct user userProfiles[MAX_USERS];		 // array of user profiles
+	struct user *userProfilesptr = userProfiles; // pointer to user profiles array
+	int userAmount = 0;							 // amount of users registered
+	int *userAmountptr = &userAmount;			 // pointer to amount of users registered
+	int apptAmount = 0;							 // amount of appointments made
+	int *apptAmountptr = &apptAmount;			 // pointer to the amount of appointments made
 
-    userProfiles = (struct user *) malloc(MAX_USERS * sizeof(struct user)); // allocate memory for the userProfiles array
-
-    if (userProfiles == NULL) {  // check if the memory allocation was successful
-        printf("Error: Unable to allocate memory for user profiles\n");
-        return 1;
-    }
-
-    // displayLoading();
-    mainmenu(userProfiles, userAmountptr, apptAmountptr);
-    displayExit();
-
-    free(userProfiles); // free the memory allocated for the userProfiles array
-
-    return 0;
+	// displayLoading();
+	mainmenu(userProfilesptr, userAmountptr, apptAmountptr);
+	displayExit();
+	return 0;
 }

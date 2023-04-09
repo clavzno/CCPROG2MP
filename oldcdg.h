@@ -1,21 +1,23 @@
-/* LIBRARIES, DEFINE DIRECTIVES */
+/* Libaries */
 #include <stdio.h>
 #include <stdlib.h> //for system("cls")
 #include <string.h>
 #include <unistd.h> //Required for the sleep() function, alternate is <windows.h>
+
+/* Define directives for max users since dynamic memory allocation is hard */
 #define MAX_USERS 100
 #define MAX_QUESTIONS 10
 #define MAX_ANSWERS 10
 #define MAX_APPOINTMENTS 10
 
-/* TYPEDEFs */
+/* Necessary Typedef declarations */
 typedef char Str6[7];
 typedef char Str10[11];
 typedef char Str20[21];
 typedef char Str30[31];
 typedef char QnA[81]; // for faq
 
-/* STRUCTS */
+/* Struct Declarations */
 // stores appointment details per user
 struct appointment
 {
@@ -49,18 +51,30 @@ struct user
   struct faq chathistory;
 };
 
-/* UI Functions and define directives for cosmetics */
+/* UI Functions and define directives */
+/* Define directives for cosmetic purposes in the program such as the
+main menu and headers when under a certain module. */
+
 // \e == (Esc)ape code, [ for ANSI code, m for end of ANSI code
+#define ANSI_WHITE "\e[0;1m"   // default
 #define ANSI_RED "\e[0;31m"    // FOR ERRORS
 #define ANSI_BLUE "\e[0;34m"   // FOR TIPS
-#define ANSI_YELLOW "\e[0;93
-#define ANSI_GREEN "\e[0;92m
-#define ANSI_CYAN "\e[0;96
-#define ANSI_OFF "\e[0m"       
+#define ANSI_YELLOW "\e[0;93m" // menu 1: vaccination registration
+#define ANSI_GREEN "\e[0;92m"  // menu 2: data management
+#define ANSI_CYAN "\e[0;96m"   // menu 3: settings
+#define ANSI_OFF "\e[0m"       // removes ANSI code and restores to default text
+// COLOR_OFF to end command; 1 = bold, 5 = slow blink, X = color, m = end of
 
-/************************************************************/
+// ANSI code
+#define ANSI_PREVLINE "\033[1A"       // moves cursor to previous line
+#define ANSI_CLEAR "\033[2J\033[1;1H" // clear screen and move cursor to (1,1)
+#define ANSI_REPEATCHOICE "\r\033[1A\r\033[K\r\033[1A\r\033[K\r\033[1A\r\033[K"
 
-/* DISPLAY FUNCTIONS*/
+// WIP
+#define ANSI_REPRINTINFO ""
+
+/**********************************************/
+/*Display Functions*/
 
 /* requires <unistd.h>/<windows.h> for sleep */
 
@@ -90,7 +104,7 @@ void displayExit()
   for (i = 0; i <= 6; i++)
   {
     for (j = 0; sleep(1); j++) // sleep delays the printing of "." for 1sec
-      // j = a; 
+      // j = a;
       printf(".");
   }
   printf("\n");
@@ -120,23 +134,9 @@ void displayLine_ast()
   printf("**********************************************************\n\n");
 } // 58 characters
 
-// Password Asterisk Function (hides password input)
-void displayPassword_ast(Str10 password)
-{
-  int len = strlen(password);
+/**********************************************/
 
-  for (int i = 0; i < len; i++)
-  {
-    if (password[i] != ' ' && password[i] != '\n')
-    {
-      password[i] = '*';
-    }
-  }
-}
-/************************************************************/
-
-
-/* Check Functions */ // note: to move above under functions that use it below
+/* Check Functions */
 
 // Checks for iteration where there is an empty profile, returns index
 
@@ -212,6 +212,20 @@ int checkPassword(char *password, char *confirmPass)
   }
 }
 
+// Password Asterisk Function (hides password input)
+void hidePassword(Str10 password)
+{
+  int len = strlen(password);
+
+  for (int i = 0; i < len; i++)
+  {
+    if (password[i] != ' ' && password[i] != '\n')
+    {
+      password[i] = '*';
+    }
+  }
+}
+
 // Erase all data (wip)
 /* to check: can it be replaced with struct = empty_struct */
 void setNull(struct user *userProfilesptr, int *userAmountptr)
@@ -264,16 +278,17 @@ void setNull(struct user *userProfilesptr, int *userAmountptr)
   userProfile[userID].chathistory.numFAQs = 0;
 } */
 
-/************************************************************/
+/**********************************************/
 
-/* FUNCTION PROTOTYPES */
+/* Function Prototypes */
 
-// [0] MAIN MENU (in cdc.c)
-int mainmenu(struct user *userProfilesptr, int *userAmountptr, int *apptAmountptr);
+// I. Main Menu [User]
+// int mainmenu(struct user *userProfilesptr, int *userAmountptr, int *apptAmountptr);
 
-// [1] VACCINATION REGISTRATION
+// Vaccination Registration Menu
 
-// 1.1 User Registration
+// 1. User Registration
+
 void reg_User(struct user *userProfilesptr, int *userAmountptr)
 {
 
@@ -458,7 +473,8 @@ void reg_User(struct user *userProfilesptr, int *userAmountptr)
   userAmountptr++;
 }
 
-// 1.2 Vaccination Appointment Registration
+// 2. Vaccination Appointment //WIP//
+
 void reg_Appt(struct user *userProfilesptr, int *userAmountptr, int *apptAmountptr)
 {
   fflush(stdin);
@@ -533,9 +549,9 @@ void reg_Appt(struct user *userProfilesptr, int *userAmountptr, int *apptAmountp
   printf("Dose: %s", userProfilesptr[validID].appdetails->dose);
 }
 
-// [2] CHATBOT/FAQS
+// 3. Chatbot FAQs
 
-// Sub function for printf questions
+// 3.1 Chatbot Questions
 void chat_printquestions()
 {
   printf("[1] Is Vaccination necessary?\n");
@@ -546,7 +562,6 @@ void chat_printquestions()
   printf("[6] Exit\n");
 }
 
-// Sub function for fprintf questions
 void file_printquestions(FILE *fp)
 {
   fprintf(fp, "[1] Is Vaccination necessary?\n");
@@ -557,7 +572,6 @@ void file_printquestions(FILE *fp)
   fprintf(fp, "[6] Exit\n");
 }
 
-// 2.1 Chatbot function
 int reg_Chat(struct user *userProfilesptr, int *userAmountptr)
 {
   FILE *fp;
@@ -624,21 +638,14 @@ int reg_Chat(struct user *userProfilesptr, int *userAmountptr)
   fclose(fp);
 }
 
+// 4. Exit
+// return 0;
+
 /************************************************************/
-// [3] ADMIN/DATA MANAGEMENT
+// ADMIN MENUS
 
-// MAIN MENU FOR ADMIN
-int management(struct user *userProfilesptr, int *userAmountptr, int *apptAmountptr);
-
-
-
-
-
-// 3.1 USER DATA MENU (in cdg.c)
-int mng_User(struct user *userProfilesptr, int *userAmountptr);
-
-// Sub function: View User ID List
-void mng_userView(struct user *userProfilesptr, int *userAmountptr)
+// 1.0.1 Access all user IDs
+void mng_UserView(struct user *userProfilesptr, int *userAmountptr)
 {
   int i;
   printf("User ID List\n\n");
@@ -647,9 +654,8 @@ void mng_userView(struct user *userProfilesptr, int *userAmountptr)
     printf("User ID: %d\n", userProfilesptr[i].userID);
   }
 }
-
-// Sub function: Find Profile Iteration via User ID
-int mng_userFind(struct user *userProfilesptr, int *userAmountptr, int ID)
+// 1.3.1 Access profile with ID
+int mng_findUser(struct user *userProfilesptr, int *userAmountptr, int ID)
 {
   int i;
   for (i = 0; i < *userAmountptr; i++)
@@ -666,7 +672,13 @@ int mng_userFind(struct user *userProfilesptr, int *userAmountptr, int ID)
   }
 }
 
-// User Data > [1] Add new user
+// Admin Management Main Menu (this function is at cdg.c at the moment)
+//int management(struct user *userProfilesptr, int *userAmountptr, int *apptAmountptr);
+
+// 1.0 User (this function is at cdg.c at the moment)
+// int mng_User(struct user *userProfilesptr, int *userAmountptr);
+
+// 1.1 Add new user (same as registering a new user minus the fancy stuff)
 void mng_User_Add(struct user *userProfilesptr, int *userAmountptr)
 {
   // variable declarations
@@ -843,7 +855,7 @@ void mng_User_Add(struct user *userProfilesptr, int *userAmountptr)
   userAmountptr++;
 }
 
-// User Data > [2] View all users
+// 1.2 View all users (prints all users)
 void mng_User_View(struct user *userProfilesptr, int *userAmountptr)
 {
   int i;
@@ -868,7 +880,7 @@ void mng_User_View(struct user *userProfilesptr, int *userAmountptr)
   }
 }
 
-// User Data > [3] Edit user details
+// 1.3 Edit User details
 void mng_User_Edit(struct user *userProfilesptr, int *userAmountptr)
 {
   int viewIDs, userID, userIndex;
@@ -878,19 +890,18 @@ void mng_User_Edit(struct user *userProfilesptr, int *userAmountptr)
 
   if (viewIDs == 1)
   {
-    mng_userView(userProfilesptr, userAmountptr);
+    mng_UserView(userProfilesptr, userAmountptr);
   }
 
   printf("Enter ID of user to edit: ");
   scanf("%d", &userID);
-  userIndex = mng_userFind(userProfilesptr, userAmountptr, userID);
+  userIndex = mng_findUser(userProfilesptr, userAmountptr, userID);
 
   printf("You are editing Profile %d with ID %d\n", userIndex, userID);
   printf("Choose ");
 }
 
-// User Data > [4] Delete user/s
-// User data > [5] Return to Data Management
+// 1.4 Delete User
 int mng_User_Delete(struct user *userProfilesptr, int *userAmountptr)
 {
   int userID, userIndex = 0, choice, confirmchoice, i;
@@ -905,7 +916,7 @@ int mng_User_Delete(struct user *userProfilesptr, int *userAmountptr)
   {
     printf("Enter user ID to delete: ");
     scanf("%d", &userID);
-    userIndex = mng_userFind(userProfilesptr, userAmountptr, userID);
+    userIndex = mng_findUser(userProfilesptr, userAmountptr, userID);
     printf("Are you sure you want to delete user %d? (1 = yes, 2 = no)\n", userID);
     scanf("%d", &confirmchoice);
 
@@ -944,22 +955,17 @@ int mng_User_Delete(struct user *userProfilesptr, int *userAmountptr)
   }
 }
 
+// 2.0 Appointment (this function is at cdg.c at the moment)
+// int mng_Appt(struct user *userProfilesptr, int *userAmountptr, int *apptAmountptr);
 
-
-
-
-
-// 3.2 APPOINTMENT DATA MENU (in cdg.c)
-int mng_Appt(struct user *userProfilesptr, int *userAmountptr, int *apptAmountptr);
-
-// Appt Data > [1] Add appointment
+// 2.1 Add new appt (Same as making new appointments without the fancy stuff)
 void mng_Appt_Add(struct user *userProfilesptr, int *userAmountptr, int *apptAmountptr)
 {
   int userIndex, tempID, tempAID, validAID;
 
   printf("Enter user ID to add appointment to: ");
   scanf("%d", &tempID);
-  userIndex = mng_userFind(userProfilesptr, userAmountptr, tempID);
+  userIndex = mng_findUser(userProfilesptr, userAmountptr, tempID);
 
   printf("You are adding an appointment to Profile %d with ID %d\n", userIndex, tempID);
 
@@ -995,7 +1001,7 @@ void mng_Appt_Add(struct user *userProfilesptr, int *userAmountptr, int *apptAmo
   apptAmountptr++;
 }
 
-// Appt Data > [2] View all appointments
+// 2.2 View all appts
 void mng_Appt_View(struct user *userProfilesptr, int *userAmountptr, int *apptAmountptr)
 {
   int i, j;
@@ -1014,7 +1020,7 @@ void mng_Appt_View(struct user *userProfilesptr, int *userAmountptr, int *apptAm
     }
 }
 
-// Appt Data > [3] Edit appointment details
+// 2.3 Edit Appt
 void mng_Appt_Edit(struct user *userProfilesptr, int *userAmountptr, int *apptAmountptr)
 {
   int userIndex, tempID, tempAID, validAID;
@@ -1022,7 +1028,7 @@ void mng_Appt_Edit(struct user *userProfilesptr, int *userAmountptr, int *apptAm
 
   printf("Enter user ID to add appointment to: ");
   scanf("%d", &tempID);
-  userIndex = mng_userFind(userProfilesptr, userAmountptr, tempID);
+  userIndex = mng_findUser(userProfilesptr, userAmountptr, tempID);
 
   printf("You are editing an appointment to Profile %d with ID %d\n", userIndex, tempID);
   printf("Choose which to edit: \n");
@@ -1101,14 +1107,14 @@ void mng_Appt_Edit(struct user *userProfilesptr, int *userAmountptr, int *apptAm
   printf("[6] User Appointment Dose Number: %d\n", userProfilesptr[userIndex].appdetails->dose);
 }
 
-// Appt Data > [4] Delete appointment/s
+// 2.4 Delete Appt
 void mng_Appt_Delete(struct user *userProfilesptr, int *userAmountptr, int *apptAmountptr)
 {
   int apptID, apptIndex = 0, choice, confirmchoice;
   //struct appointment emptystruct = {0};
   printf("Enter appointment ID to delete: ");
   scanf("%d", &apptID);
-  apptIndex = mng_userFind(userProfilesptr, userAmountptr, apptID);
+  apptIndex = mng_findUser(userProfilesptr, userAmountptr, apptID);
 
   printf("You are deleting appointment ID %d\n", apptID);
   printf("Confirm deletion? [1] Yes [2] No\n");
@@ -1125,34 +1131,31 @@ void mng_Appt_Delete(struct user *userProfilesptr, int *userAmountptr, int *appt
   }
 }
 
-// Appt Data > [5] Return to Data Management
-int mng_Appt_Exit();
+// 3.0 [Admin]Chatbot
+int mng_Chat(struct user *userProfilesptr, int *userAmountptr)
+{
+  int choice;
+  printf("Choose an option:\n");
+  printf("[1] Add New QnA\n");
+  printf("[2] View all QnA\n");
+  printf("[3] Delete QnA\n");
+  printf("[4] Exit\n");
+  printf("Choice: ");
+  scanf("%d", &choice);
 
+  switch (choice)
+  {
+  case 1:
+  case 2:
+  case 3:
+  case 4:
+  {
+    return 0;
+  }
+  }
+}
 
-
-
-
-// 3.3 CHATBOT DATA MENU (in cdg.c)
-int mng_Chat(struct user *userProfilesptr, int *userAmountptr);
-
-// Chatbot Data > [1] Add chatbot data
-int mng_Chat_Add();
-// Chatbot Data > [2] View all chatbot data
-int mng_Chat_View();
-// Chatbot Data > [3] Edit chatbot data
-int mng_Chat_Edit();
-// Chatbot Data > [4] Delete chatbot data
-int mng_Chat_Delete();
-
-
-
-
-
-
-// 3.4 DATA FILES MENU (in cdg.c)
-int mng_ChoosePort(struct user *userProfilesptr, int *userAmountptr, int *apptAmountptr);
-
-// Import/Export Data > [1] Import data
+// 4.0A Import
 void mng_Import(struct user *userProfilesptr, int *userAmountptr)
 {
   FILE *fp;
@@ -1189,7 +1192,7 @@ void mng_Import(struct user *userProfilesptr, int *userAmountptr)
   fclose(fp);
 }
 
-// Import/Export Data > [2] Export data
+// 4.0B Export
 void mng_Export(struct user *userProfilesptr, int *userAmountptr)
 {
   FILE *fp;
@@ -1225,6 +1228,5 @@ void mng_Export(struct user *userProfilesptr, int *userAmountptr)
   fclose(fp);
 }
 
-
-// 3.5 SAVE AND EXIT
-int mng_SaveExit(struct user *userProfilesptr, int *userAmountptr, int *apptAmountptr);
+// Exit (saves all updates and terminates program)
+//void mng_Exit(struct user *userProfilesptr, int *userAmountptr);
