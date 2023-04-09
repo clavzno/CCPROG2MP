@@ -288,6 +288,8 @@ void setNull(struct user *userProfilesptr, int *userAmountptr)
 // [0] MAIN MENU (in cdc.c)
 //int mainmenu(struct user *userProfilesptr, int *userAmountptr, int *apptAmountptr);
 //int submainmenu(struct user *userProfilesptr, int *userAmountptr, int *apptAmountptr)
+int mainmenu(struct user *userProfilesptr, int *userAmountptr, int *apptAmountptr);
+int submainmenu(struct user *userProfilesptr, int *userAmountptr, int *apptAmountptr);
 
 /************************************************************/
 // [1] VACCINATION REGISTRATION
@@ -578,7 +580,7 @@ void file_printquestions(FILE *fp)
 }
 
 // 2.1 Chatbot function
-int reg_Chat(struct user *userProfilesptr, int *userAmountptr)
+/* int reg_Chat(struct user *userProfilesptr, int *userAmountptr)
 {
   FILE *fp;
   fp = fopen("chatlog.txt", "w");
@@ -642,7 +644,12 @@ int reg_Chat(struct user *userProfilesptr, int *userAmountptr)
   }   // end while
 
   fclose(fp);
+} */
+
+int reg_Chat(struct user *userProfilesptr, int *userAmountptr)
+{
 }
+
 
 /************************************************************/
 // [3] ADMIN/DATA MANAGEMENT
@@ -655,8 +662,7 @@ int management(struct user *userProfilesptr, int *userAmountptr, int *apptAmount
 
 
 // 3.1 USER DATA MENU (in cdg.c)
-//int mng_User(struct user *userProfilesptr, int *userAmountptr);
-
+int mng_User(struct user *userProfilesptr, int *userAmountptr);
 // Sub function: View User ID List
 void mng_userView(struct user *userProfilesptr, int *userAmountptr)
 {
@@ -910,7 +916,6 @@ void mng_User_Edit(struct user *userProfilesptr, int *userAmountptr)
 }
 
 // User Data > [4] Delete user/s
-// User data > [5] Return to Data Management
 int mng_User_Delete(struct user *userProfilesptr, int *userAmountptr)
 {
   int userID, userIndex = 0, choice, confirmchoice, i;
@@ -963,6 +968,7 @@ int mng_User_Delete(struct user *userProfilesptr, int *userAmountptr)
     return 0;
   }
 }
+// User data > [5] Return to Data Management
 
 
 
@@ -970,7 +976,7 @@ int mng_User_Delete(struct user *userProfilesptr, int *userAmountptr)
 
 
 // 3.2 APPOINTMENT DATA MENU (in cdg.c)
-//int mng_Appt(struct user *userProfilesptr, int *userAmountptr, int *apptAmountptr);
+int mng_Appt(struct user *userProfilesptr, int *userAmountptr, int *apptAmountptr);
 
 // Appt Data > [1] Add appointment
 void mng_Appt_Add(struct user *userProfilesptr, int *userAmountptr, int *apptAmountptr)
@@ -1146,14 +1152,17 @@ void mng_Appt_Delete(struct user *userProfilesptr, int *userAmountptr, int *appt
 }
 
 // Appt Data > [5] Return to Data Management
-int mng_Appt_Exit();
+int mng_Appt_Exit(){
+  return 0;
+}
 
 
 
 
 
 // 3.3 CHATBOT DATA MENU (in cdg.c)
-//int mng_Chat(struct user *userProfilesptr, int *userAmountptr);
+// Data Management Menu [Admin]
+int mng_Chat(struct user *userProfilesptr, int *userAmountptr);
 
 // Chatbot Data > [1] Add chatbot data
 int mng_Chat_Add();
@@ -1170,7 +1179,7 @@ int mng_Chat_Delete();
 
 
 // 3.4 DATA FILES MENU (in cdg.c)
-//int mng_ChoosePort(struct user *userProfilesptr, int *userAmountptr, int *apptAmountptr);
+int mng_ChoosePort(struct user *userProfilesptr, int *userAmountptr, int *apptAmountptr);
 
 // Import/Export Data > [1] Import data
 void mng_Import(struct user *userProfilesptr, int *userAmountptr)

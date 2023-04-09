@@ -14,88 +14,6 @@ Date Updated: 2023-04-08
 #include <string.h>
 #include <unistd.h>
 
-// Data Management Menu [Admin]
-int mng_Chat(struct user *userProfilesptr, int *userAmountptr)
-{
-	int choice;
-	do
-	{
-		printf("Choose an option:\n");
-		printf("[1] Add New QnA\n");
-		printf("[2] View all QnA\n");
-		printf("[3] Delete QnA\n");
-		printf("[4] Exit\n");
-		printf("Choice: ");
-		scanf("%d", &choice);
-
-		switch (choice)
-		{
-		case 1:
-		{
-			/*Add vaccination FAQ question and answer in the chatbot text file. Your program will ask the admin if  they want to add another  question and answer or go back to the Chatbot menu.*/
-			mng_Chat_Add(userProfilesptr, userAmountptr);
-			break;
-		}
-		case 2:
-		{
-			/* This feature shows all the questions and answers for the chatbot. The program goes back to the Chatbot menu after viewing the Chatbot questions and answers*/
-			mng_Chat_View(userProfilesptr, userAmountptr);
-			break;
-		}
-		case 3:
-		{
-			/* This will allow the admin to edit questions and answers in the chatbot text file. Your program will ask the admin if they want to edit another  question and answer or go back to the Chatbot menu.*/
-			mng_Chat_Edit(userProfilesptr, userAmountptr);
-		}
-		case 4:
-		{
-			/* This  will  allow  the  admin  to  delete  questions  and  answers  in  the chatbot text file. Your program will ask the admin if they want to delete another question and answer page 5 or go back to the Chatbot menu.*/
-			mng_Chat_Delete(userProfilesptr, userAmountptr);
-			break;
-		}
-		case 5:
-		{
-			/*  The  exit  option  allows  the  user  to  quit  the  Chatbot  menu.  The  program  goes  back  to  the  Data Management  Menu. */
-			return 0;
-		}
-		}
-	} while (choice != 5);
-}
-
-int mng_ChoosePort(struct user *userProfilesptr, int *userAmountptr, int *apptAmountptr)
-{
-	int choice;
-	do
-	{
-		printf("Choose an option:\n");
-		printf("[1] Import\n");
-		printf("[2] Export\n");
-		printf("[3] Exit\n");
-		printf("Choice: ");
-		scanf("%d", &choice);
-
-		switch (choice)
-		{
-		case 1:
-		{
-			mng_Import(userProfilesptr, userAmountptr);
-			break;
-		}
-		case 2:
-		{
-			mng_Export(userProfilesptr, userAmountptr);
-			break;
-		}
-		case 3:
-		{
-			return 0;
-			// mng_Exit(userProfilesptr, userAmountptr);
-			break;
-		}
-		}
-	} while (choice != 3);
-}
-
 int mng_User(struct user *userProfilesptr, int *userAmountptr)
 {
 	int choice;
@@ -190,6 +108,87 @@ int mng_Appt(struct user *userProfilesptr, int *userAmountptr, int *apptAmountpt
 		}
 		}
 	} while (choice != 5);
+}
+
+int mng_Chat(struct user *userProfilesptr, int *userAmountptr)
+{
+	int choice;
+	do
+	{
+		printf("Choose an option:\n");
+		printf("[1] Add New QnA\n");
+		printf("[2] View all QnA\n");
+		printf("[3] Delete QnA\n");
+		printf("[4] Exit\n");
+		printf("Choice: ");
+		scanf("%d", &choice);
+
+		switch (choice)
+		{
+		case 1:
+		{
+			/*Add vaccination FAQ question and answer in the chatbot text file. Your program will ask the admin if  they want to add another  question and answer or go back to the Chatbot menu.*/
+			mng_Chat_Add(userProfilesptr, userAmountptr);
+			break;
+		}
+		case 2:
+		{
+			/* This feature shows all the questions and answers for the chatbot. The program goes back to the Chatbot menu after viewing the Chatbot questions and answers*/
+			mng_Chat_View(userProfilesptr, userAmountptr);
+			break;
+		}
+		case 3:
+		{
+			/* This will allow the admin to edit questions and answers in the chatbot text file. Your program will ask the admin if they want to edit another  question and answer or go back to the Chatbot menu.*/
+			mng_Chat_Edit(userProfilesptr, userAmountptr);
+		}
+		case 4:
+		{
+			/* This  will  allow  the  admin  to  delete  questions  and  answers  in  the chatbot text file. Your program will ask the admin if they want to delete another question and answer page 5 or go back to the Chatbot menu.*/
+			mng_Chat_Delete(userProfilesptr, userAmountptr);
+			break;
+		}
+		case 5:
+		{
+			/*  The  exit  option  allows  the  user  to  quit  the  Chatbot  menu.  The  program  goes  back  to  the  Data Management  Menu. */
+			return 0;
+		}
+		}
+	} while (choice != 5);
+}
+
+int mng_ChoosePort(struct user *userProfilesptr, int *userAmountptr, int *apptAmountptr)
+{
+	int choice;
+	do
+	{
+		printf("Choose an option:\n");
+		printf("[1] Import\n");
+		printf("[2] Export\n");
+		printf("[3] Exit\n");
+		printf("Choice: ");
+		scanf("%d", &choice);
+
+		switch (choice)
+		{
+		case 1:
+		{
+			mng_Import(userProfilesptr, userAmountptr);
+			break;
+		}
+		case 2:
+		{
+			mng_Export(userProfilesptr, userAmountptr);
+			break;
+		}
+		case 3:
+		{
+			return 0;
+			// mng_Exit(userProfilesptr, userAmountptr);
+			break;
+		}
+		}
+	} while (choice != 3);
 }
 
 int management(struct user *userProfilesptr, int *userAmountptr, int *apptAmountptr)
