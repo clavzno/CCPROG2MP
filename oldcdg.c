@@ -9,7 +9,7 @@ Date Updated: 2023-04-08
 
 ***************/
 
-#include "oldcdg.h"
+#include "cdg.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -21,15 +21,15 @@ Date Updated: 2023-04-08
 int mng_ChoosePort(struct user *userProfilesptr, int *userAmountptr, int *apptAmountptr)
 {
 	int choice;
-	printf("Choose an option:\n");
-	printf("[1] Import\n");
-	printf("[2] Export\n");
-	printf("[3] Exit\n");
-	printf("Choice: ");
-	scanf("%d", &choice);
-
 	do
 	{
+		printf("Choose an option:\n");
+		printf("[1] Import\n");
+		printf("[2] Export\n");
+		printf("[3] Exit\n");
+		printf("Choice: ");
+		scanf("%d", &choice);
+
 		switch (choice)
 		{
 		case 1:
@@ -45,7 +45,7 @@ int mng_ChoosePort(struct user *userProfilesptr, int *userAmountptr, int *apptAm
 		case 3:
 		{
 			return 0;
-			//mng_Exit(userProfilesptr, userAmountptr);
+			// mng_Exit(userProfilesptr, userAmountptr);
 			break;
 		}
 		}
@@ -55,16 +55,16 @@ int mng_ChoosePort(struct user *userProfilesptr, int *userAmountptr, int *apptAm
 int mng_User(struct user *userProfilesptr, int *userAmountptr)
 {
 	int choice;
-	printf("User Data\n\n");
-	printf("[1] Add new user\n"
-		   "[2] View all users\n"
-		   "[3] Edit User details\n"
-		   "[4] Delete User\n"
-		   "[5] Return to Data Management\n\n");
-	scanf("%d", &choice);
-
 	do
 	{
+		printf("User Data\n\n");
+		printf("[1] Add new user\n"
+			   "[2] View all users\n"
+			   "[3] Edit User details\n"
+			   "[4] Delete User\n"
+			   "[5] Return to Data Management\n\n");
+		scanf("%d", &choice);
+
 		switch (choice)
 		{
 		case 1:
@@ -99,16 +99,16 @@ int mng_Appt(struct user *userProfilesptr, int *userAmountptr, int *apptAmountpt
 {
 
 	int choice;
-	printf("User Data\n\n");
-	printf("[1] Add new Appointments\n"
-		   "[2] View all Appointments\n"
-		   "[3] Edit Appointments\n"
-		   "[4] Delete Appointments\n"
-		   "[5] Return to Data Management\n\n");
-	scanf("%d", &choice);
-
 	do
 	{
+		printf("User Data\n\n");
+		printf("[1] Add new Appointments\n"
+			   "[2] View all Appointments\n"
+			   "[3] Edit Appointments\n"
+			   "[4] Delete Appointments\n"
+			   "[5] Return to Data Management\n\n");
+		scanf("%d", &choice);
+
 		switch (choice)
 		{
 		case 1:
@@ -186,7 +186,7 @@ int management(struct user *userProfilesptr, int *userAmountptr, int *apptAmount
 		{
 			system("cls");
 			return 0;
-			//mng_Exit(userProfilesptr, userAmountptr);
+			// mng_Exit(userProfilesptr, userAmountptr);
 			break;
 		}
 		default:
@@ -194,7 +194,7 @@ int management(struct user *userProfilesptr, int *userAmountptr, int *apptAmount
 			printf(ANSI_RED "Error: Invalid Choice\n" ANSI_OFF);
 			sleep(2);
 			system("cls");
-			return 0; // return to main menu
+			mainmenu(userProfilesptr, userAmountptr, apptAmountptr);
 		}
 		} // end switch case
 	} while (choice != 5);
@@ -261,7 +261,6 @@ int mainmenu(struct user *userProfilesptr, int *userAmountptr, int *apptAmountpt
 		}
 		default:
 		{
-			printf(ANSI_REPEATCHOICE);
 			printf(ANSI_RED "Error: Invalid Choice\n" ANSI_OFF);
 			sleep(2);
 			system("cls");

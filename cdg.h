@@ -287,6 +287,7 @@ void setNull(struct user *userProfilesptr, int *userAmountptr)
 
 // [0] MAIN MENU (in cdc.c)
 //int mainmenu(struct user *userProfilesptr, int *userAmountptr, int *apptAmountptr);
+//int submainmenu(struct user *userProfilesptr, int *userAmountptr, int *apptAmountptr)
 
 /************************************************************/
 // [1] VACCINATION REGISTRATION

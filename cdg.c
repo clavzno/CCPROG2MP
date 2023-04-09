@@ -247,17 +247,15 @@ int management(struct user *userProfilesptr, int *userAmountptr, int *apptAmount
 			printf(ANSI_RED "Error: Invalid Choice\n" ANSI_OFF);
 			sleep(2);
 			system("cls");
-			return 0; //goes back to main menu
+			return 0; // goes back to main menu
 		}
 		} // end switch case
 	} while (choice != 5);
 }
 
-int mainmenu(struct user *userProfilesptr, int *userAmountptr, int *apptAmountptr)
+int submainmenu(struct user *userProfilesptr, int *userAmountptr, int *apptAmountptr)
 {
-
-	int choice = 0;
-	int emptyprofile = checkEmptyIndex(userProfilesptr, userAmountptr); // checks and return empty index
+	int choice;
 
 	do
 	{
@@ -268,9 +266,71 @@ int mainmenu(struct user *userProfilesptr, int *userAmountptr, int *apptAmountpt
 		printf("Choose your option:\n"
 			   "[1] User Registration\n"
 			   "[2] Schedule an Appointment\n"
-			   "[3] Talk with AssistiVAX\n"
-			   "[4] Exit\n"
-			   "[5] Admin Data Management\n\n");
+			   "[3] Talk with AssistiVax\n"
+			   "[3] Exit\n\n");
+
+		displayLine_ast();
+
+		printf("Enter your choice below:\n> ");
+		scanf("%d", &choice);
+
+		switch (choice)
+		{
+		case 1:
+		{
+			/* Once this option is chosen, the user will be asked to input all the necessary information about the user. For simplicity, the userID  is also given by the user as input. However, this userID should be unique (that is, no other such userID exists  in the list of users). After registering, the user is redirected back to the Vaccination Registration System menu. Don’t forget to prompt the user of their Successful Registration */
+			system("cls");
+			reg_User(userProfilesptr, userAmountptr);
+			break;
+		}
+		case 2:
+		{
+			/* When a user registers successfully, they can log in with their userID and password. Your program should give the user three unsuccessful attempts before terminating the program. The Vaccination Appointment menu has two sub-menus: Appointment Request and Manage Appointment menu with the following specifications:*/
+			system("cls");
+			reg_Appt(userProfilesptr, userAmountptr, apptAmountptr);
+			break;
+		}
+		case 3:
+		{
+			/* This menu allows the user to ask FAQs (Frequently Asked Questions) to a simple chatbot related to COVID 19.Your program will ask the user to enter a question as a string, then compares the string from the content of the chatbot text file. You can compare the two strings lexicographically using the strcmp() function from string.h, which  simply  means  that  it  compares  each  character  in  sequence  starting  with  the  first  character  until  the characters in both strings are equal or a NULL character is found. If a match is found, the answer will be displayed on the screen. However, if the match is not found, the user will be prompted with “Sorry, I  don’t know the answer.  Please type another question”. This will allow the user to enter another question or exit the chatbot feature and go back to the main menu.  Note that format of the text files are listed under Exit menu of the Data Management Menu.*/
+			system("cls");
+			reg_Chat(userProfilesptr, userAmountptr);
+			break;
+		}
+		case 4:
+		{
+			/* The exit option allows the user to quit the program. */
+			system("cls");
+			return 0;
+			break;
+		}
+		default:
+		{
+			printf(ANSI_RED "Error: Invalid Choice\n" ANSI_OFF);
+			sleep(2);
+			system("cls");
+			return 0; // goes back to main menu
+		}
+		}	
+	} while (choice != 4);
+}
+
+int mainmenu(struct user *userProfilesptr, int *userAmountptr, int *apptAmountptr)
+{
+
+	int choice;
+	int emptyprofile = checkEmptyIndex(userProfilesptr, userAmountptr); // checks and return empty index
+
+	do
+	{
+		displayLine_ast();
+
+		printf("Welcome to AssistiVAX! Your Personal Vaccination Assistant\n\n");
+		printf("Are you an admin or user?\n");
+		printf("Choose your option:\n"
+			   "[1] User\n"
+			   "[2] Admin\n"
+			   "[3] Exit\n\n");
 
 		displayLine_ast();
 
@@ -282,34 +342,22 @@ int mainmenu(struct user *userProfilesptr, int *userAmountptr, int *apptAmountpt
 		case 1:
 		{
 			system("cls");
-			reg_User(userProfilesptr, userAmountptr);
-			mainmenu(userProfilesptr, userAmountptr, apptAmountptr);
+			submainmenu(userProfilesptr, userAmountptr, apptAmountptr);
 			break;
 		}
 		case 2:
 		{
+			/* Data  management  menu  is  for  the  administrator  who  will  manage  the  Vaccination  Registration  with  Chatbot  Application. To grant access to the module, the user must log-in using their userID and password (you should have all  the characters to asterisks ) . Further, the user is granted with three attempts to log-in, otherwise the program will  be terminated. For verification, he is asked to input the password. Upon successful log-in, the following features are available:*/
 			system("cls");
-			reg_Appt(userProfilesptr, userAmountptr, apptAmountptr);
+			management(userProfilesptr, userAmountptr, apptAmountptr);
 			mainmenu(userProfilesptr, userAmountptr, apptAmountptr);
 			break;
 		}
 		case 3:
 		{
-			system("cls");
-			reg_Chat(userProfilesptr, userAmountptr);
-			mainmenu(userProfilesptr, userAmountptr, apptAmountptr);
-			break;
-		}
-		case 4:
-		{
+			/* The exit option allows the user to quit the program. */
 			system("cls");
 			return 0;
-		}
-		case 5:
-		{
-			system("cls");
-			management(userProfilesptr, userAmountptr, apptAmountptr);
-			mainmenu(userProfilesptr, userAmountptr, apptAmountptr);
 			break;
 		}
 		default:
@@ -321,8 +369,7 @@ int mainmenu(struct user *userProfilesptr, int *userAmountptr, int *apptAmountpt
 			break;
 		}
 		}
-		fflush(stdin);
-	} while (choice != 4);
+	} while (choice != 3);
 	return 0;
 }
 
