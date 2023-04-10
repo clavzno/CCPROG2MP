@@ -9,15 +9,14 @@
 #define MAX_APPOINTMENTS 10
 
 /* TYPEDEFs */
-typedef char Str6[7]; // 6 characters + null terminator
+typedef char Str6[7];   // 6 characters + null terminator
 typedef char Str10[11]; // 10 characters + null terminator
 typedef char Str20[21]; // 20 characters + null terminator
 typedef char Str30[31]; // 30 characters + null terminator
-typedef char QnA[81]; // 80 characters + null terminator
+typedef char QnA[81];   // 80 characters + null terminator
 
 /* UI COLORS */
 // \e == (Esc)ape code, [ for ANSI code, m for end of ANSI code
-#define ANSI_WHITE "\e[0;1m"   // default
 #define ANSI_RED "\e[0;31m"    // FOR ERRORS
 #define ANSI_BLUE "\e[0;34m"   // FOR TIPS
 #define ANSI_YELLOW "\e[0;93m" // menu 1: vaccination registration
@@ -74,7 +73,7 @@ struct empty_struct
 
   struct appointment appdetails[MAX_APPOINTMENTS];
   struct faq chathistory;
-};    
+};
 
 /************************************************************/
 
@@ -108,7 +107,7 @@ void displayExit()
   for (i = 0; i <= 6; i++)
   {
     for (j = 0; sleep(1); j++) // sleep delays the printing of "." for 1sec
-      // j = a; 
+      // j = a;
       printf(".");
   }
   printf("\n");
@@ -171,18 +170,30 @@ int checkEmptyIndex(struct user *userProfilesptr, int *userAmountptr)
 }
 
 // Checks if entered ID is available, returns 1 if available, 0 if not - Note: each ID has to be unique
-int checkID(struct user *userProfilesptr, int *userAmountptr, int tempid)
+// Returns 1 if the given userID already exists in the userProfiles array, 0 otherwise.
+int checkID(struct user *userProfilesptr, int *userAmountptr, int userID)
 {
+  if (userProfilesptr == NULL)
+  {
+    printf("Error: userProfilesptr is NULL.\n");
+    return -1;
+  }
+  if (userAmountptr <= 0)
+  {
+    printf("Error: userAmount must be greater than 0.\n");
+    return -1;
+  }
   int i;
   for (i = 0; i < *userAmountptr; i++)
   {
-    if (userProfilesptr[i].userID == tempid)
+    if (userProfilesptr[i].userID == userID)
     {
       return 1; // found a matching id (therefore unavailable)
     }
   }
-  return 0; // no matching id found
+  return 0; // no matching id found (available)
 }
+
 
 int checkAIDIndex(struct user *userProfilesptr, int *userAmountptr, int tempid)
 {
@@ -212,23 +223,6 @@ int checkAID(struct user *userProfilesptr, int *userAmountptr, int *apptAmountpt
   return 0; // no matching id found
 }
 
-// Password Check Function (wip)
-int checkPassword(char *password, char *confirmPass)
-{
-  if (strcmp(password, confirmPass) == 0)
-  {
-    return 1; // passwords match
-  }
-  else
-  {
-    printf(ANSI_RED "Error: Passwords do not match.\n" ANSI_OFF);
-    // set confirmPass to null
-    memset(password, 0, sizeof(password));
-    memset(confirmPass, 0, sizeof(confirmPass));
-    return 0; // passwords do not match
-  }
-}
-
 // Erase all data (wip)
 /* to check: can it be replaced with struct = empty_struct */
 void setNull(struct user *userProfilesptr, int *userAmountptr)
@@ -236,7 +230,7 @@ void setNull(struct user *userProfilesptr, int *userAmountptr)
   int i;
   for (i = 0; i < *userAmountptr; i++)
   {
-    userProfilesptr[i].userID = 0;
+    userProfilesptr[i].userID = -1;
     strcpy(userProfilesptr[i].password, "");
     strcpy(userProfilesptr[i].name, "");
     strcpy(userProfilesptr[i].contact, "");
@@ -286,8 +280,8 @@ void setNull(struct user *userProfilesptr, int *userAmountptr)
 /* FUNCTION PROTOTYPES */
 
 // [0] MAIN MENU (in cdc.c)
-//int mainmenu(struct user *userProfilesptr, int *userAmountptr, int *apptAmountptr);
-//int submainmenu(struct user *userProfilesptr, int *userAmountptr, int *apptAmountptr)
+// int mainmenu(struct user *userProfilesptr, int *userAmountptr, int *apptAmountptr);
+// int submainmenu(struct user *userProfilesptr, int *userAmountptr, int *apptAmountptr)
 int mainmenu(struct user *userProfilesptr, int *userAmountptr, int *apptAmountptr);
 int submainmenu(struct user *userProfilesptr, int *userAmountptr, int *apptAmountptr);
 
@@ -302,13 +296,12 @@ void reg_User(struct user *userProfilesptr, int *userAmountptr)
   int tempid = 0, idcheck = 0, passcheck = 0, userIndex;
   char firstname[11], lastname[11];
   int secondDose, thirdDose;
-  char confirmPass[11];
+  char temppass[11], confirmPass[11];
 
   userIndex = checkEmptyIndex(userProfilesptr, userAmountptr);
   printf("Empty profile found at index %d\n", userIndex);
 
-  printf("User Registration\n"
-         "Please input the requested data.\n\n");
+  printf("User Registration\n" ANSI_BLUE "Please input the requested data.\n\n" ANSI_OFF);
 
   // int userID
   do
@@ -321,6 +314,7 @@ void reg_User(struct user *userProfilesptr, int *userAmountptr)
     {
       printf(ANSI_RED "Error: ID already taken.\n" ANSI_OFF);
     }
+
   } while (idcheck > 0);
 
   printf(ANSI_GREEN "Success: ID available\n" ANSI_OFF);
@@ -328,27 +322,28 @@ void reg_User(struct user *userProfilesptr, int *userAmountptr)
   printf("User ID: %d\n", userProfilesptr[userIndex].userID);
 
   // char password[11]
-  
-  do {
+  do
+  {
     printf("Enter your password: ");
-    fgets(userProfilesptr[userIndex].password, 11, stdin);
-    while(getchar() != '\n');
-	
+    fgets(temppass, 11, stdin);
     printf("Please confirm your password: ");
     fgets(confirmPass, 11, stdin);
-	while(getchar() != '\n');
-	
-    passcheck = checkPassword(userProfilesptr[userIndex].password, confirmPass);
 
-    if (passcheck == 0)
+    if (strcmp(userProfilesptr[userIndex].password, confirmPass) != 0)
     {
       printf(ANSI_RED "Error: Passwords do not match.\n" ANSI_OFF);
+      memset(userProfilesptr[userIndex].password, 0, sizeof(userProfilesptr[userIndex].password));
+      memset(confirmPass, 0, sizeof(confirmPass));
     }
-	
-  } while (passcheck == 0);
+    else
+    {
+      printf(ANSI_GREEN "Success: Passwords match.\n" ANSI_OFF);
+      strcpy(userProfilesptr[userIndex].password, temppass);
+    }
 
-  printf(ANSI_GREEN "Success: Passwords match.\n" ANSI_OFF);
-  printf("Confirmed Password: %s", userProfilesptr[userIndex].password);
+  } while (strcmp(userProfilesptr[userIndex].password, confirmPass) != 0);
+
+  printf("Confirmed Password: %s\n", userProfilesptr[userIndex].password);
 
   // str20 name
   printf("Enter your first name: ");
@@ -360,7 +355,6 @@ void reg_User(struct user *userProfilesptr, int *userAmountptr)
   fgets(lastname, 11, stdin);
   lastname[strlen(lastname) - 1] = '\0'; // remove newline character
   fflush(stdin);
-  printf("\r\r");
   strcat(userProfilesptr[userIndex].name, firstname); // add first name
   strcat(userProfilesptr[userIndex].name, " ");       // add space
   strcat(userProfilesptr[userIndex].name, lastname);  // add last name
@@ -368,16 +362,16 @@ void reg_User(struct user *userProfilesptr, int *userAmountptr)
   fflush(stdin); // clears the buffer because of the newline character
 
   // int contact
-  printf("Enter your contact number:\n");
+  printf("Enter your contact number:");
   fgets(userProfilesptr[userIndex].contact, 12, stdin);
   fflush(stdin);
-  printf("Number: %s", userProfilesptr[userIndex].contact);
+  printf("Number: %s\n", userProfilesptr[userIndex].contact);
 
   // str30 address
-  printf("Enter your address:\n");
+  printf("Enter your address:");
   fgets(userProfilesptr[userIndex].address, 31, stdin);
   fflush(stdin);
-  printf("\nAddress: %s", userProfilesptr[userIndex].address);
+  printf("Address: %s\n", userProfilesptr[userIndex].address);
 
   // str10 sex [Male/Female]
   printf("Enter your sex " ANSI_BLUE "[Male/Female]: " ANSI_OFF);
@@ -386,20 +380,20 @@ void reg_User(struct user *userProfilesptr, int *userAmountptr)
   printf("\nSex: %s", userProfilesptr[userIndex].sex);
 
   // str10 dose date
-  printf("Enter date of first dose:\n");
+  printf("Enter date of first dose" ANSI_BLUE " [YYYY-MM-DD]: " ANSI_OFF);
   fgets(userProfilesptr[userIndex].dose1_date, 11, stdin);
   fflush(stdin);
-  printf("\nFirst Dose Date: %s", userProfilesptr[userIndex].dose1_date);
+  printf("First Dose Date: %s\n", userProfilesptr[userIndex].dose1_date);
   // str10 dose type
-  printf("Enter type of first dose:\n");
+  printf("Enter type of first dose brand: " ANSI_BLUE "[Sinovac/Moderna]: " ANSI_OFF);
   fgets(userProfilesptr[userIndex].dose1_type, 11, stdin);
   fflush(stdin);
-  printf("First Dose Type: %s", userProfilesptr[userIndex].dose1_type);
+  printf("First Dose Type: %s\n", userProfilesptr[userIndex].dose1_type);
   // str01 dose location
-  printf("Enter location of first dose:\n");
+  printf("Enter location of first dose: ");
   fgets(userProfilesptr[userIndex].dose1_loc, 11, stdin);
   fflush(stdin);
-  printf("\nFirst Dose Location: %s", userProfilesptr[userIndex].dose1_loc);
+  printf("First Dose Location: %s\n", userProfilesptr[userIndex].dose1_loc);
 
   // prompt for second and third dose
   printf("Do you have a second dose? " ANSI_BLUE "[1/0]: " ANSI_OFF);
@@ -476,6 +470,8 @@ void reg_User(struct user *userProfilesptr, int *userAmountptr)
     memset(userProfilesptr[userIndex].dose3_loc, 0, sizeof(userProfilesptr[userIndex].dose3_loc));
     printf("\nThird Dose Location: %s", userProfilesptr[userIndex].dose3_loc);
   }
+  system("cls");
+  printf("User Registration Complete!\n");
   userAmountptr++;
 }
 
@@ -483,7 +479,7 @@ void reg_User(struct user *userProfilesptr, int *userAmountptr)
 void reg_Appt(struct user *userProfilesptr, int *userAmountptr, int *apptAmountptr)
 {
   fflush(stdin);
-    
+
   // variable declarations
   int validID, validAID, tempID, tempAID;
 
@@ -650,7 +646,6 @@ int reg_Chat(struct user *userProfilesptr, int *userAmountptr)
 {
 }
 
-
 /************************************************************/
 // [3] ADMIN/DATA MANAGEMENT
 
@@ -659,12 +654,10 @@ int reg_Chat(struct user *userProfilesptr, int *userAmountptr)
 // user is granted 3 attempts to log in, otherwise terminate program
 int management(struct user *userProfilesptr, int *userAmountptr, int *apptAmountptr);
 
-
-
 // 3.1 USER DATA MENU (in cdg.c)
 int mng_User(struct user *userProfilesptr, int *userAmountptr);
 // Sub function: View User ID List
-void mng_userView(struct user *userProfilesptr, int *userAmountptr)
+void mng_UserView(struct user *userProfilesptr, int *userAmountptr)
 {
   int i;
   printf("User ID List\n\n");
@@ -695,203 +688,7 @@ int mng_userFind(struct user *userProfilesptr, int *userAmountptr, int ID)
 // User Data > [1] Add new user
 void mng_User_Add(struct user *userProfilesptr, int *userAmountptr)
 {
-  // variable declarations
-  int tempid = 0, idcheck = 0, passcheck = 0, userIndex;
-  char firstname[11], lastname[11];
-  int secondDose, thirdDose;
-  char confirmPass[11];
-
-  userIndex = checkEmptyIndex(userProfilesptr, userAmountptr);
-  printf("Empty profile found at index %d\n", userIndex);
-
-  // int userID
-  do
-  {
-    printf("Enter User ID:\n\n");
-    scanf("%d", &tempid);
-    idcheck = checkID(userProfilesptr, userAmountptr, tempid);
-
-    if (idcheck > 0)
-    {
-      printf(ANSI_RED "Error: ID already taken.\n" ANSI_OFF);
-    }
-  } while (idcheck > 0);
-
-  printf(ANSI_GREEN "Success: ID available\n" ANSI_OFF);
-  userProfilesptr[userIndex].userID = tempid;
-  printf("User ID: %d\n", userProfilesptr[userIndex].userID);
-
-  // char password[11]
-  
-  while (passcheck == 0) 
-  {
-    printf("Enter user password:\n");
-    fgets(userProfilesptr[userIndex].password, 11, stdin);
-    userProfilesptr[userIndex].password[strcspn(userProfilesptr[userIndex].password, "\n")] = 0;
-    
-	printf("Please confirm user password: ");
-    fgets(confirmPass, 11, stdin);
-	confirmPass[strcspn(confirmPass, "\n")] = 0;	
-	
-    passcheck = checkPassword(userProfilesptr[userIndex].password, confirmPass);
-  
-  }
-
-  printf(ANSI_GREEN "Success: Passwords match.\n" ANSI_OFF);
-  printf("Confirmed Password: %s", userProfilesptr[userIndex].password);
-
-  // str20 name
-  printf("Enter your first name: ");
-  fgets(firstname, 11, stdin);
-  firstname[strlen(firstname) - 1] = '\0'; // remove newline character
-  fflush(stdin);
-  printf("\r\r");
-  printf("Enter your last name: ");
-  fgets(lastname, 11, stdin);
-  lastname[strlen(lastname) - 1] = '\0'; // remove newline character
-  fflush(stdin);
-  printf("\r\r");
-  strcat(userProfilesptr[userIndex].name, firstname); // add first name
-  strcat(userProfilesptr[userIndex].name, " ");       // add space
-  strcat(userProfilesptr[userIndex].name, lastname);  // add last name
-  printf("Name: %s\n", userProfilesptr[userIndex].name);
-  fflush(stdin); // clears the buffer because of the newline character
-
-  // int contact
-  printf("Enter your contact number:\n");
-  fgets(userProfilesptr[userIndex].contact, 12, stdin);
-  fflush(stdin);
-  printf("Number: %s", userProfilesptr[userIndex].contact);
-
-  // str30 address
-  printf("Enter your address:\n");
-  fgets(userProfilesptr[userIndex].address, 31, stdin);
-  fflush(stdin);
-  printf("\nAddress: %s", userProfilesptr[userIndex].address);
-
-  // str10 sex [Male/Female]
-  printf("Enter your sex " ANSI_BLUE "[Male/Female]: " ANSI_OFF);
-  fgets(userProfilesptr[userIndex].sex, 11, stdin);
-  fflush(stdin);
-  printf("\nSex: %s", userProfilesptr[userIndex].sex);
-
-  // str10 dose date
-  printf("Enter date of first dose:\n");
-  fgets(userProfilesptr[userIndex].dose1_date, 11, stdin);
-  fflush(stdin);
-  printf("\nFirst Dose Date: %s", userProfilesptr[userIndex].dose1_date);
-  // str10 dose type
-  printf("Enter type of first dose:\n");
-  fgets(userProfilesptr[userIndex].dose1_type, 11, stdin);
-  fflush(stdin);
-  printf("First Dose Type: %s", userProfilesptr[userIndex].dose1_type);
-  // str01 dose location
-  printf("Enter location of first dose:\n");
-  fgets(userProfilesptr[userIndex].dose1_loc, 11, stdin);
-  fflush(stdin);
-  printf("\nFirst Dose Location: %s", userProfilesptr[userIndex].dose1_loc);
-
-  // prompt for second and third dose
-  printf("Do you have a second dose? " ANSI_BLUE "[1/0]: " ANSI_OFF);
-  scanf("%d", &secondDose);
-  fflush(stdin);
-  printf("\nSecond Dose Choice: %d", secondDose);
-
-  if (secondDose = 1)
-  {
-    printf("Enter date of second dose:\n");
-    fgets(userProfilesptr[userIndex].dose2_date, 11, stdin);
-    fflush(stdin);
-    printf("\nSecond Dose Date: %s", userProfilesptr[userIndex].dose2_date);
-
-    // str10 dose type
-    printf("Enter type of second dose:\n");
-    fgets(userProfilesptr[userIndex].dose2_type, 11, stdin);
-    fflush(stdin);
-    printf("\nSecond Dose Type: %s", userProfilesptr[userIndex].dose2_type);
-    // str10 dose location
-    printf("Enter location of second dose:\n");
-    fgets(userProfilesptr[userIndex].dose2_loc, 11, stdin);
-    fflush(stdin);
-    printf("\nSecond Dose Location: %s", userProfilesptr[userIndex].dose2_loc);
-
-    // prompt for third dose
-    printf("Do you have a third dose? " ANSI_BLUE "[1/0]: " ANSI_OFF);
-    scanf("%d", &thirdDose);
-    fflush(stdin);
-    printf("\nThird Dose Choice: %d", thirdDose);
-
-    if (thirdDose == 1)
-    {
-      printf("Enter date of third dose:\n");
-      fgets(userProfilesptr[userIndex].dose3_date, 11, stdin);
-      fflush(stdin);
-      printf("\nThird Dose Date: %s", userProfilesptr[userIndex].dose3_date);
-      // str10 dose type
-      printf("Enter type of third dose:\n");
-      fgets(userProfilesptr[userIndex].dose3_type, 11, stdin);
-      fflush(stdin);
-      printf("\nThird Dose Type: %s", userProfilesptr[userIndex].dose3_type);
-      // str10 dose location
-      printf("Enter location of third dose:\n");
-      fgets(userProfilesptr[userIndex].dose3_loc, 11, stdin);
-      fflush(stdin);
-      printf("\nThird Dose Location: %s", userProfilesptr[userIndex].dose3_loc);
-    }
-    else
-    {
-      // set third dose to null
-      memset(userProfilesptr[userIndex].dose3_date, 0, sizeof(userProfilesptr[userIndex].dose3_date));
-      printf("\nThird Dose Date: %s", userProfilesptr[userIndex].dose3_date);
-      memset(userProfilesptr[userIndex].dose3_type, 0, sizeof(userProfilesptr[userIndex].dose3_type));
-      printf("\nThird Dose Type: %s", userProfilesptr[userIndex].dose3_type);
-      memset(userProfilesptr[userIndex].dose3_loc, 0, sizeof(userProfilesptr[userIndex].dose3_loc));
-      printf("\nThird Dose Location: %s", userProfilesptr[userIndex].dose3_loc);
-    }
-  }
-
-  else
-  {
-    // set second dose to null
-    memset(userProfilesptr[userIndex].dose2_date, 0, sizeof(userProfilesptr[userIndex].dose2_date));
-    printf("\nSecond Dose Date: %s", userProfilesptr[userIndex].dose2_date);
-    memset(userProfilesptr[userIndex].dose2_type, 0, sizeof(userProfilesptr[userIndex].dose2_type));
-    printf("\nSecond Dose Type: %s", userProfilesptr[userIndex].dose2_type);
-    memset(userProfilesptr[userIndex].dose2_loc, 0, sizeof(userProfilesptr[userIndex].dose2_loc));
-    printf("\nSecond Dose Location: %s", userProfilesptr[userIndex].dose2_loc);
-    memset(userProfilesptr[userIndex].dose3_date, 0, sizeof(userProfilesptr[userIndex].dose3_date));
-    printf("\nThird Dose Date: %s", userProfilesptr[userIndex].dose3_date);
-    memset(userProfilesptr[userIndex].dose3_type, 0, sizeof(userProfilesptr[userIndex].dose3_type));
-    printf("\nThird Dose Type: %s", userProfilesptr[userIndex].dose3_type);
-    memset(userProfilesptr[userIndex].dose3_loc, 0, sizeof(userProfilesptr[userIndex].dose3_loc));
-    printf("\nThird Dose Location: %s", userProfilesptr[userIndex].dose3_loc);
-  }
-  userAmountptr++;
-}
-
-// User Data > [2] View all users
-void mng_User_View(struct user *userProfilesptr, int *userAmountptr)
-{
-  int i;
-  printf("User ID List\n\n");
-  for (i = 0; i < *userAmountptr; i++)
-  {
-    printf("User ID: %d\n", userProfilesptr[i].userID);
-    printf("User Name: %s\n", userProfilesptr[i].name);
-    printf("User Password: %s\n", userProfilesptr[i].password);
-    printf("User Contact: %s\n", userProfilesptr[i].contact);
-    printf("User Address: %s\n", userProfilesptr[i].address);
-    printf("User Sex: %s\n", userProfilesptr[i].sex);
-    printf("First Dose Date: %s\n", userProfilesptr[i].dose1_date);
-    printf("First Dose Type: %s\n", userProfilesptr[i].dose1_type);
-    printf("First Dose Location: %s\n", userProfilesptr[i].dose1_loc);
-    printf("Second Dose Date: %s\n", userProfilesptr[i].dose2_date);
-    printf("Second Dose Type: %s\n", userProfilesptr[i].dose2_type);
-    printf("Second Dose Location: %s\n", userProfilesptr[i].dose2_loc);
-    printf("Third Dose Date: %s\n", userProfilesptr[i].dose3_date);
-    printf("Third Dose Type: %s\n", userProfilesptr[i].dose3_type);
-    printf("Third Dose Location: %s\n", userProfilesptr[i].dose3_loc);
-  }
+  printf("You are at User Data > [1] Add new user");
 }
 
 // User Data > [3] Edit user details
@@ -904,7 +701,7 @@ void mng_User_Edit(struct user *userProfilesptr, int *userAmountptr)
 
   if (viewIDs == 1)
   {
-    mng_userView(userProfilesptr, userAmountptr);
+    mng_UserView(userProfilesptr, userAmountptr);
   }
 
   printf("Enter ID of user to edit: ");
@@ -969,11 +766,6 @@ int mng_User_Delete(struct user *userProfilesptr, int *userAmountptr)
   }
 }
 // User data > [5] Return to Data Management
-
-
-
-
-
 
 // 3.2 APPOINTMENT DATA MENU (in cdg.c)
 int mng_Appt(struct user *userProfilesptr, int *userAmountptr, int *apptAmountptr);
@@ -1131,7 +923,7 @@ void mng_Appt_Edit(struct user *userProfilesptr, int *userAmountptr, int *apptAm
 void mng_Appt_Delete(struct user *userProfilesptr, int *userAmountptr, int *apptAmountptr)
 {
   int apptID, apptIndex = 0, choice, confirmchoice;
-  //struct appointment emptystruct = {0};
+  // struct appointment emptystruct = {0};
   printf("Enter appointment ID to delete: ");
   scanf("%d", &apptID);
   apptIndex = mng_userFind(userProfilesptr, userAmountptr, apptID);
@@ -1152,13 +944,10 @@ void mng_Appt_Delete(struct user *userProfilesptr, int *userAmountptr, int *appt
 }
 
 // Appt Data > [5] Return to Data Management
-int mng_Appt_Exit(){
+int mng_Appt_Exit()
+{
   return 0;
 }
-
-
-
-
 
 // 3.3 CHATBOT DATA MENU (in cdg.c)
 // Data Management Menu [Admin]
@@ -1172,11 +961,6 @@ int mng_Chat_View();
 int mng_Chat_Edit();
 // Chatbot Data > [4] Delete chatbot data
 int mng_Chat_Delete();
-
-
-
-
-
 
 // 3.4 DATA FILES MENU (in cdg.c)
 int mng_ChoosePort(struct user *userProfilesptr, int *userAmountptr, int *apptAmountptr);
@@ -1197,16 +981,16 @@ void mng_Import(struct user *userProfilesptr, int *userAmountptr)
   }
 
   // Read user profiles from file
-  while (fscanf(fp, "%d %s %s %s %s %s %s %s %s %s %s %s %s", 
-            &userProfilesptr[i].userID,
-            userProfilesptr[i].password,
-            userProfilesptr[i].name,
-            userProfilesptr[i].contact,
-            userProfilesptr[i].address,
-            userProfilesptr[i].sex, 
-            userProfilesptr[i].dose1_date, userProfilesptr[i].dose1_type, userProfilesptr[i].dose1_loc,
-            userProfilesptr[i].dose2_date, userProfilesptr[i].dose2_type, userProfilesptr[i].dose2_loc,
-            userProfilesptr[i].dose3_date, userProfilesptr[i].dose3_type, userProfilesptr[i].dose3_loc) == 15)
+  while (fscanf(fp, "%d %s %s %s %s %s %s %s %s %s %s %s %s",
+                &userProfilesptr[i].userID,
+                userProfilesptr[i].password,
+                userProfilesptr[i].name,
+                userProfilesptr[i].contact,
+                userProfilesptr[i].address,
+                userProfilesptr[i].sex,
+                userProfilesptr[i].dose1_date, userProfilesptr[i].dose1_type, userProfilesptr[i].dose1_loc,
+                userProfilesptr[i].dose2_date, userProfilesptr[i].dose2_type, userProfilesptr[i].dose2_loc,
+                userProfilesptr[i].dose3_date, userProfilesptr[i].dose3_type, userProfilesptr[i].dose3_loc) == 15)
   {
     i++;
   }
@@ -1253,7 +1037,6 @@ void mng_Export(struct user *userProfilesptr, int *userAmountptr)
   // Close the file
   fclose(fp);
 }
-
 
 // 3.5 SAVE AND EXIT
 int mng_SaveExit(struct user *userProfilesptr, int *userAmountptr, int *apptAmountptr);

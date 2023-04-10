@@ -38,7 +38,7 @@ int mng_User(struct user *userProfilesptr, int *userAmountptr)
 		case 2:
 		{
 			/* View all the users arranged by user ID. The display should be in table format in the following sequence: userID, name, address, contact, sex,  first  dose,  first  dose  vaccine,  first  dose  location,    second dose, second dose vaccine, booster dose and booster dose vaccine. The program goes back to the User menu after viewing the User details.*/
-			mng_User_View(userProfilesptr, userAmountptr);
+			mng_UserView(userProfilesptr, userAmountptr);
 			break;
 		}
 		case 3:
@@ -128,24 +128,24 @@ int mng_Chat(struct user *userProfilesptr, int *userAmountptr)
 		case 1:
 		{
 			/*Add vaccination FAQ question and answer in the chatbot text file. Your program will ask the admin if  they want to add another  question and answer or go back to the Chatbot menu.*/
-			//mng_Chat_Add(userProfilesptr, userAmountptr);
+			// mng_Chat_Add(userProfilesptr, userAmountptr);
 			break;
 		}
 		case 2:
 		{
 			/* This feature shows all the questions and answers for the chatbot. The program goes back to the Chatbot menu after viewing the Chatbot questions and answers*/
-			//mng_Chat_View(userProfilesptr, userAmountptr);
+			// mng_Chat_View(userProfilesptr, userAmountptr);
 			break;
 		}
 		case 3:
 		{
 			/* This will allow the admin to edit questions and answers in the chatbot text file. Your program will ask the admin if they want to edit another  question and answer or go back to the Chatbot menu.*/
-			//mng_Chat_Edit(userProfilesptr, userAmountptr);
+			// mng_Chat_Edit(userProfilesptr, userAmountptr);
 		}
 		case 4:
 		{
 			/* This  will  allow  the  admin  to  delete  questions  and  answers  in  the chatbot text file. Your program will ask the admin if they want to delete another question and answer page 5 or go back to the Chatbot menu.*/
-			//mng_Chat_Delete(userProfilesptr, userAmountptr);
+			// mng_Chat_Delete(userProfilesptr, userAmountptr);
 			break;
 		}
 		case 5:
@@ -310,7 +310,7 @@ int submainmenu(struct user *userProfilesptr, int *userAmountptr, int *apptAmoun
 			system("cls");
 			return 0; // goes back to main menu
 		}
-		}	
+		}
 	} while (choice != 4);
 }
 
@@ -405,6 +405,34 @@ int main()
 	int *userAmountptr = &userAmount;			 // pointer to amount of users registered
 	int apptAmount = 0;							 // amount of appointments made
 	int *apptAmountptr = &apptAmount;			 // pointer to the amount of appointments made
+
+	printf("Initializing user profiles...\n");
+	sleep(1);
+	// initalize all user profiles to be empty
+	for (int i = 0; i < MAX_USERS; i++)
+	{
+		userProfiles[i].userID = -1;
+		strcpy(userProfiles[i].password, "");
+		strcpy(userProfiles[i].name, "");
+		strcpy(userProfiles[i].contact, "");
+		strcpy(userProfiles[i].address, "");
+		strcpy(userProfiles[i].sex, "");
+		strcpy(userProfiles[i].dose1_date, "");
+		strcpy(userProfiles[i].dose1_type, "");
+		strcpy(userProfiles[i].dose1_loc, "");
+	}
+
+	// initialize first user profile to be admin
+	userProfilesptr[0].userID = 1;
+	strcpy(userProfilesptr[0].password, "password");
+	strcpy(userProfilesptr[0].name, "admin");
+	strcpy(userProfilesptr[0].contact, "0123456789");
+	strcpy(userProfilesptr[0].address, "Admin House");
+	strcpy(userProfilesptr[0].sex, "Male");
+	strcpy(userProfilesptr[0].dose1_date, "01-01-2021");
+	strcpy(userProfilesptr[0].dose1_type, "Moderna");
+	strcpy(userProfilesptr[0].dose1_loc, "Philippines");
+	userAmountptr++;
 
 	// displayLoading();
 	mainmenu(userProfilesptr, userAmountptr, apptAmountptr);

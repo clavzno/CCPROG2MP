@@ -469,11 +469,8 @@ int main() {
   struct user *ptr = Profiles;     // pointer to Profiles to access values
   struct settings Settings;
   struct settings *setptr = &Settings; // pointer to Settings to access values
-
-  int num_users =
-      0; // we know the max size but we don't know the number of users
-  int *num_usersptr =
-      &num_users; // pointer to num_users to access value of users thus far
+  int num_users = 0; // we know the max size but we don't know the number of users
+  int *num_usersptr = &num_users; // pointer to num_users to access value of users thus far
 
   // note use malloc to add new user space?
   // display_loading();
