@@ -128,24 +128,24 @@ int mng_Chat(struct user *userProfilesptr, int *userAmountptr)
 		case 1:
 		{
 			/*Add vaccination FAQ question and answer in the chatbot text file. Your program will ask the admin if  they want to add another  question and answer or go back to the Chatbot menu.*/
-			mng_Chat_Add(userProfilesptr, userAmountptr);
+			//mng_Chat_Add(userProfilesptr, userAmountptr);
 			break;
 		}
 		case 2:
 		{
 			/* This feature shows all the questions and answers for the chatbot. The program goes back to the Chatbot menu after viewing the Chatbot questions and answers*/
-			mng_Chat_View(userProfilesptr, userAmountptr);
+			//mng_Chat_View(userProfilesptr, userAmountptr);
 			break;
 		}
 		case 3:
 		{
 			/* This will allow the admin to edit questions and answers in the chatbot text file. Your program will ask the admin if they want to edit another  question and answer or go back to the Chatbot menu.*/
-			mng_Chat_Edit(userProfilesptr, userAmountptr);
+			//mng_Chat_Edit(userProfilesptr, userAmountptr);
 		}
 		case 4:
 		{
 			/* This  will  allow  the  admin  to  delete  questions  and  answers  in  the chatbot text file. Your program will ask the admin if they want to delete another question and answer page 5 or go back to the Chatbot menu.*/
-			mng_Chat_Delete(userProfilesptr, userAmountptr);
+			//mng_Chat_Delete(userProfilesptr, userAmountptr);
 			break;
 		}
 		case 5:
