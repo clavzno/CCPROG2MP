@@ -68,7 +68,7 @@ main menu and headers when under a certain module. */
 // ANSI code
 #define ANSI_PREVLINE "\033[1A"       // moves cursor to previous line
 #define ANSI_CLEAR "\033[2J\033[1;1H" // clear screen and move cursor to (1,1)
-#define ANSI_REPEATCHOICE "\r\033[1A\r\033[K\r\033[1A\r\033[K\r\033[1A\r\033[K"
+#define ANSI_REPEATCHOICE "\r\033[1A\r\033[K\r\033[1A\r\033[K\r\033[1A\r\033\r\033[1A\r\033[K\r\033[1A\r\033[K\r\033[1A\r\033[K"
 
 // WIP
 #define ANSI_REPRINTINFO ""
@@ -340,6 +340,8 @@ void reg_User(struct user *userProfilesptr, int *userAmountptr)
     }
 	
   } while (passcheck == 0);
+
+
 
   printf(ANSI_GREEN "Success: Passwords match.\n" ANSI_OFF);
   printf("Confirmed Password: %s", userProfilesptr[userIndex].password);
