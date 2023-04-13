@@ -3,7 +3,7 @@ CCPROG2 S18 GRP <NUMBER>
 Clavano, Angelica Therese
 De Grano, Justin Patrick
 
-Date Created: 2023-03-22
+Date Created: 2023-03-22s
 Date Merged: 2023-04-02
 Date Updated: 2023-04-11
 ***************/
@@ -19,6 +19,7 @@ int mng_User(struct user *userProfilesptr)
 	int choice;
 	do
 	{
+		printf("\n");
 		printf("User Data\n\n");
 		printf("[1] Add New User\n"
 			   "[2] View All Users\n"
@@ -67,6 +68,7 @@ int mng_Appt(struct user *userProfilesptr)
 	int choice;
 	do
 	{
+		printf("\n");
 		printf("User Data\n\n");
 		printf("[1] Add New Appointments\n"
 			   "[2] View All Appointments\n"
@@ -80,25 +82,25 @@ int mng_Appt(struct user *userProfilesptr)
 		case 1:
 		{
 			/* Add new appointment details that includes appID, name, location, vaccine, date and time. Your program will ask the admin if they want to add another  appointment or  go back to the Appointment menu.*/
-			//mng_Appt_Add(userProfilesptr);
+			mng_Appt_Add(userProfilesptr);
 			break;
 		}
 		case 2:
 		{
 			/* View all the appointments by the users. The display should be in table format in the following  sequence:  appID, name, location,  vaccine,  date  and  time.  The program goes  back  to  the Appointment menu after viewing the Appointment details.*/
-			//mng_Appt_View(userProfilesptr);
+			mng_Appt_View(userProfilesptr);
 			break;
 		}
 		case 3:
 		{
 			/* Edit the details of the appointment that includes appID, name, location, vaccine, date and time. Your program will ask the admin if they want to edit another appointment details or go back to the Appointment menu.*/
-			//mng_Appt_Edit(userProfilesptr);
+			mng_Appt_Edit(userProfilesptr);
 			break;
 		}
 		case 4:
 		{
 			/* Cancel  an  appointment  by  deleting  it  from  the  list  of  appointments.  Your program will ask the admin if they want to delete another appointment or go back to the Appointment menu. */
-			//mng_Appt_Delete(userProfilesptr);
+			mng_Appt_Delete(userProfilesptr);
 			break;
 		}
 		case 5:
@@ -115,11 +117,12 @@ int mng_Chat(struct user *userProfilesptr)
 	int choice;
 	do
 	{
-		printf("Choose an option:\n");
+		printf("\nChoose an option:\n");
 		printf("[1] Add New QnA\n");
 		printf("[2] View all QnA\n");
-		printf("[3] Delete QnA\n");
-		printf("[4] Exit\n");
+		printf("[3] Manage QnA\n");
+		printf("[4] Delete QnA\n");
+		printf("[5] Exit\n");
 		printf("Choice: ");
 		scanf("%d", &choice);
 
@@ -128,24 +131,25 @@ int mng_Chat(struct user *userProfilesptr)
 		case 1:
 		{
 			/*Add vaccination FAQ question and answer in the chatbot text file. Your program will ask the admin if  they want to add another  question and answer or go back to the Chatbot menu.*/
-			// mng_Chat_Add(userProfilesptr, );
+			mng_Chat_Add();
 			break;
 		}
 		case 2:
 		{
 			/* This feature shows all the questions and answers for the chatbot. The program goes back to the Chatbot menu after viewing the Chatbot questions and answers*/
-			// mng_Chat_View(userProfilesptr, );
+			mng_Chat_View();
 			break;
 		}
 		case 3:
 		{
 			/* This will allow the admin to edit questions and answers in the chatbot text file. Your program will ask the admin if they want to edit another  question and answer or go back to the Chatbot menu.*/
-			// mng_Chat_Edit(userProfilesptr, );
+			mng_Chat_Edit();
+			break;
 		}
 		case 4:
 		{
 			/* This  will  allow  the  admin  to  delete  questions  and  answers  in  the chatbot text file. Your program will ask the admin if they want to delete another question and answer page 5 or go back to the Chatbot menu.*/
-			// mng_Chat_Delete(userProfilesptr, );
+			mng_Chat_Delete();
 			break;
 		}
 		case 5:
@@ -162,7 +166,7 @@ int mng_ChoosePort(struct user *userProfilesptr)
 	int choice;
 	do
 	{
-		printf("Choose an Option:\n");
+		printf("\nChoose an Option:\n");
 		printf("[1] Import\n");
 		printf("[2] Export\n");
 		printf("[3] Exit\n");
@@ -197,6 +201,7 @@ int management(struct user *userProfilesptr)
 
 	do
 	{
+		printf("\n");
 		printf("Data Management\n\n");
 
 		printf("Choose your option:\n"
@@ -409,24 +414,23 @@ int main()
 		}
 	}
 
-	// initialize first user profile to be admin
-	strcpy(userProfilesptr[0].userID, "1");
-	strcpy(userProfilesptr[0].password, "password");
-	strcpy(userProfilesptr[0].name, "admin");
-	strcpy(userProfilesptr[0].contact, "0123456789");
-	strcpy(userProfilesptr[0].address, "Admin House");
-	strcpy(userProfilesptr[0].sex, "Male");
-	strcpy(userProfilesptr[0].dose1_date, "01-01-2021");
-	strcpy(userProfilesptr[0].dose1_type, "Moderna");
-	strcpy(userProfilesptr[0].dose1_loc, "Philippines");
-
-	// admin first appt
-	strcpy(userProfilesptr[0].appdetails[0].appID, "1");
-	strcpy(userProfilesptr[0].appdetails[0].date, "01-01-2021");
-	strcpy(userProfilesptr[0].appdetails[0].time, "10:00");
-	strcpy(userProfilesptr[0].appdetails[0].location, "Philippines");
-	strcpy(userProfilesptr[0].appdetails[0].vaccine, "Moderna");
-	strcpy(userProfilesptr[0].appdetails[0].dose, "Second");
+	/* To test out index */
+	/*
+	strcpy(userProfiles[0].userID, "1");;
+	strcpy(userProfiles[0].password, "password");;
+	strcpy(userProfiles[0].name, "admin");;
+	strcpy(userProfiles[0].contact, "admin num");;
+	strcpy(userProfiles[0].address, "1 street");;
+	strcpy(userProfiles[0].dose1_date, "2023-01-01");
+	strcpy(userProfiles[0].dose1_type, "Pfizer");
+	strcpy(userProfiles[0].dose1_loc, "2 street");
+	strcpy(userProfiles[0].appdetails[0].appID, "1");
+	strcpy(userProfiles[0].appdetails[0].location, "1 street");
+	strcpy(userProfiles[0].appdetails[0].vaccine, "Moderna");
+	strcpy(userProfiles[0].appdetails[0].time, "12:12");
+	strcpy(userProfiles[0].appdetails[0].date, "2023-01-01");
+	strcpy(userProfiles[0].appdetails[0].dose, "Second");
+	*/
 
 	// displayLoading();
 	mainmenu(userProfilesptr);

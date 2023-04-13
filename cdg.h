@@ -11,6 +11,11 @@
 #define MAX_USERLINES 8 * MAX_USERS
 #define MAX_APPTLINES 8 * MAX_APPOINTMENTS
 
+/* Added after submission */
+#include <ctype.h>
+#define MAX_QUESTION_LEN 80
+#define MAX_ANSWER_LEN 80
+
 /* TYPEDEFs */
 
 typedef char Str6[7];   // 6 characters + null terminator
@@ -207,11 +212,26 @@ int checkAIDIndex(struct user *userProfilesptr, int userIndex)
   int j;
   for (j = 0; j < MAX_APPOINTMENTS; j++) // check every appt per user
   {
-    if (strcmp(userProfilesptr[userIndex].appdetails[j].appID, "-1") == 0)
+    if (strcmp(userProfilesptr[userIndex].appdetails[j].appID, "\0") == 0)
     {
       return j; // empty found
     }
   }
+  return 0; // no matching id found
+}
+
+// looks for the profile index based on app ID
+int checkAIDUserIndex(struct user *userProfilesptr, char tempid[11])
+{
+  int i, j;
+  for (i = 0; i < MAX_USERS; i++)          // check every user
+    for (j = 0; j < MAX_APPOINTMENTS; j++) // check every appt per user
+    {
+      if (strcmp(userProfilesptr[i].appdetails[j].appID, tempid) == 0)
+      {
+        return i; // matching id found
+      }
+    }
   return 0; // no matching id found
 }
 
@@ -744,6 +764,74 @@ void reg_Appt(struct user *userProfilesptr)
 
 int reg_Chat(struct user *userProfilesptr) // check chattest2.c
 {
+  char input_question[81];
+  printf("Printing Questions:\n");
+  mng_Chat_View(); // print chatbot menu
+  printf("Ask me a question (type 'exit' to quit): ");
+  fgets(input_question, MAX_QUESTION_LEN, stdin);    // read user input
+  input_question[strcspn(input_question, "\n")] = 0; // remove trailing newline
+
+  while (strcmp(input_question, "exit") != 0) // continue prompting user until they type "exit"
+  {
+    reg_Chat(input_question); // pass user input to reg_Chat function
+    printf("\nAsk me a question (type 'exit' to quit): ");
+    fgets(input_question, 81, stdin);    // read user input
+    input_question[strcspn(input_question, "\n")] = 0; // remove trailing newline
+  }
+  char question[81], answer[81];
+  FILE *fp, *fp_history;
+  fp = fopen("chatbot.txt", "r");
+  fp_history = fopen("chathistory.txt", "a"); // open file for appending
+
+  int found = 0;
+
+  if (fp == NULL || fp_history == NULL)
+  {
+    printf("Error opening files!\n");
+    return 1;
+  }
+
+  // Convert input question to lowercase for case-insensitive matching
+  char *lower_question = strdup(input_question);
+  for (int i = 0; lower_question[i]; i++)
+  {
+    lower_question[i] = tolower(lower_question[i]);
+  }
+
+  // Iterate through questions and answers in the file
+  while (fgets(question, MAX_QUESTION_LEN, fp))
+  {
+    fgets(answer, MAX_ANSWER_LEN, fp);
+    question[strcspn(question, "\n")] = 0; // remove trailing newline
+    answer[strcspn(answer, "\n")] = 0;
+
+    // Convert question to lowercase for case-insensitive matching
+    char *lower_q = strdup(question);
+    for (int i = 0; lower_q[i]; i++)
+    {
+      lower_q[i] = tolower(lower_q[i]);
+    }
+
+    // Use strstr to check if any word in the input question matches a word in the question file
+    if (strstr(lower_question, lower_q) != NULL)
+    {
+      printf("[AssistiVax]: %s\n", answer);
+      fprintf(fp_history, "%s\n", input_question); // write question to file
+      fprintf(fp_history, "%s\n\n", answer);       // write answer to file
+      found = 1;                                   // set flag to indicate that answer was found
+      break;
+    }
+  }
+
+  if (!found)
+  {
+    printf("Sorry, I don't know the answer. Please type another question.\n");
+    fprintf(fp_history, "%s\n", input_question);                                              // write question to file
+    fprintf(fp_history, "Sorry, I don't know the answer. Please type another question.\n\n"); // write unknown answer to file
+  }
+
+  fclose(fp);
+  fclose(fp_history);
   return 0;
 }
 
@@ -773,7 +861,7 @@ void mng_User_Add(struct user *userProfilesptr)
 // User Data > [3] Edit user details
 int mng_User_Edit(struct user *userProfilesptr)
 {
-  int choice, userIndex, detail;
+  int choice, userIndex, detail, userExists;
   char tempid[11];
   FILE *userfile = fopen("Users.txt", "r+");
 
@@ -787,7 +875,8 @@ int mng_User_Edit(struct user *userProfilesptr)
   // begin edit
   do
   {
-    do
+
+    do // userid
     {
       // enter an id
       fflush(stdin);
@@ -795,21 +884,22 @@ int mng_User_Edit(struct user *userProfilesptr)
       fgets(tempid, sizeof(tempid), stdin);
       tempid[strcspn(tempid, "\n")] = '\0';
 
-      // find the index of the id
-      userIndex = checkIDIndex(userProfilesptr, tempid);
-      if (userIndex == 0)
+      // check if id exists
+      userExists = checkID(userProfilesptr, tempid);
+      if (userExists == 0)
       {
-        printf("User ID not found. Please enter a valid ID: ");
-        scanf("%d", &tempid);
+        printf("Error: User ID not found.\n");
+        memset(tempid, 0, sizeof(tempid));
       }
-      else
-      {
-        printf("User ID found at index %d\n", userIndex);
-      }
-    } while (userIndex == 0);
+    } while (userExists == 0);
+
+    // find user index
+    userIndex = checkIDIndex(userProfilesptr, tempid);
+    printf(ANSI_GREEN "User ID found at index %d.\n\n" ANSI_OFF, userIndex);
+
     // display all details
     printf("User Details:\n"
-           "[1] UserID: %d\n"
+           "[1] UserID: %s\n"
            "[2] Password: %s\n"
            "[3] Name: %s\n"
            "[4] Contact: %s\n"
@@ -825,10 +915,26 @@ int mng_User_Edit(struct user *userProfilesptr)
            "[14] Third Dose Vaccine: %s\n"
            "[15] Third Dose Location: %s\n"
            "[16] Exit\n",
-           userProfilesptr[userIndex].userID, userProfilesptr[userIndex].password, userProfilesptr[userIndex].name, userProfilesptr[userIndex].contact, userProfilesptr[userIndex].address, userProfilesptr[userIndex].sex, userProfilesptr[userIndex].dose1_date, userProfilesptr[userIndex].dose1_type, userProfilesptr[userIndex].dose1_loc, userProfilesptr[userIndex].dose2_date, userProfilesptr[userIndex].dose2_type, userProfilesptr[userIndex].dose2_loc, userProfilesptr[userIndex].dose3_date, userProfilesptr[userIndex].dose3_type, userProfilesptr[userIndex].dose3_loc);
+           userProfilesptr[userIndex].userID,
+           userProfilesptr[userIndex].password,
+           userProfilesptr[userIndex].name,
+           userProfilesptr[userIndex].contact,
+           userProfilesptr[userIndex].address,
+           userProfilesptr[userIndex].sex,
+           userProfilesptr[userIndex].dose1_date,
+           userProfilesptr[userIndex].dose1_type,
+           userProfilesptr[userIndex].dose1_loc,
+           userProfilesptr[userIndex].dose2_date,
+           userProfilesptr[userIndex].dose2_type,
+           userProfilesptr[userIndex].dose2_loc,
+           userProfilesptr[userIndex].dose3_date,
+           userProfilesptr[userIndex].dose3_type,
+           userProfilesptr[userIndex].dose3_loc);
+
     // choose which one to edit
     printf("Enter the number of the detail you want to edit: ");
     scanf("%d", &detail);
+
     // edit
     switch (detail)
     {
@@ -836,24 +942,28 @@ int mng_User_Edit(struct user *userProfilesptr)
     {
       char tempid[11];
       char oldID[11];
+      // keep old id for file
+      strcpy(oldID, userProfilesptr[userIndex].userID);
       do
       {
-        // keep old id for file
-        strcpy(oldID, userProfilesptr[userIndex].userID);
-        printf("OLD ID: %s", oldID);
+        printf("OLD ID: %s\n", oldID);
         // overwrite new id
+        fflush(stdin);
         printf("Enter new user ID: ");
-        scanf("%d", tempid);
-        if (checkID(userProfilesptr, tempid) == 0)
-        {
-          strcpy(userProfilesptr[userIndex].userID, tempid);
-        }
-        else
+        fgets(tempid, sizeof(tempid), stdin);
+        tempid[strcspn(tempid, "\n")] = '\0'; // remove newline character
+
+        // check if id exists
+        if (checkID(userProfilesptr, tempid) != 0)
         {
           printf(ANSI_RED "Error: User ID already exists.\n" ANSI_OFF);
+          memset(tempid, 0, sizeof(tempid));
         }
-        fflush(stdin);
+
       } while (checkID(userProfilesptr, tempid) != 0);
+
+      // assign new id
+      strcpy(userProfilesptr[userIndex].userID, tempid);
       break;
     }
     case 2: // edit password
@@ -1051,58 +1161,9 @@ int mng_User_Edit(struct user *userProfilesptr)
     {
       break;
     }
-      // display all details
-      printf("Updated User Details:\n"
-             "[1] UserID: %d\n"
-             "[2] Password: %s\n"
-             "[3] Name: %s\n"
-             "[4] Contact: %s\n"
-             "[5] Address: %s\n"
-             "[6] Sex: %s\n"
-             "[7] First Dose Date: %s\n"
-             "[8] First Dose Vaccine: %s\n"
-             "[9] First Dose Location: %s\n"
-             "[10] Second Dose Date: %s\n"
-             "[11] Second Dose Vaccine: %s\n"
-             "[12] Second Dose Location: %s\n"
-             "[13] Third Dose Date: %s\n"
-             "[14] Third Dose Vaccine: %s\n"
-             "[15] Third Dose Location: %s\n"
-             "[16] Exit\n",
-             userProfilesptr[userIndex].userID,
-             userProfilesptr[userIndex].password,
-             userProfilesptr[userIndex].name,
-             userProfilesptr[userIndex].contact,
-             userProfilesptr[userIndex].address,
-             userProfilesptr[userIndex].sex,
-             userProfilesptr[userIndex].dose1_date,
-             userProfilesptr[userIndex].dose1_type,
-             userProfilesptr[userIndex].dose1_loc,
-             userProfilesptr[userIndex].dose2_date,
-             userProfilesptr[userIndex].dose2_type,
-             userProfilesptr[userIndex].dose2_loc,
-             userProfilesptr[userIndex].dose3_date,
-             userProfilesptr[userIndex].dose3_type,
-             userProfilesptr[userIndex].dose3_loc);
-    }
-    // PUT FILE STUFF HERE
-    //  prompt for next change
-    printf("Edit details of another user? [1/0]: ");
-    scanf("%d", &detail);
-    fflush(stdin);
-  } while (choice != 0);
-  fclose(userfile);
-}
-
-// User Data > [2] View All User Details (calls mng_userEdit)
-int mng_UserView(struct user *userProfilesptr)
-{
-  int i, editchoice;
-  printf("Printing User Details...\n");
-  for (i = 0; i < MAX_USERS; i++)
-  {
-    printf(ANSI_BLUE "Index: %d\n" ANSI_OFF, i);
-    printf("User Details:\n"
+    } // end switch
+    // display all details
+    printf("Updated User Details:\n"
            "[1] UserID: %d\n"
            "[2] Password: %s\n"
            "[3] Name: %s\n"
@@ -1117,24 +1178,91 @@ int mng_UserView(struct user *userProfilesptr)
            "[12] Second Dose Location: %s\n"
            "[13] Third Dose Date: %s\n"
            "[14] Third Dose Vaccine: %s\n"
-           "[15] Third Dose Location: %s\n",
-           userProfilesptr[i].userID,
-           userProfilesptr[i].password,
-           userProfilesptr[i].name,
-           userProfilesptr[i].contact,
-           userProfilesptr[i].address,
-           userProfilesptr[i].sex,
-           userProfilesptr[i].dose1_date,
-           userProfilesptr[i].dose1_type,
-           userProfilesptr[i].dose1_loc,
-           userProfilesptr[i].dose2_date,
-           userProfilesptr[i].dose2_type,
-           userProfilesptr[i].dose2_loc,
-           userProfilesptr[i].dose3_date,
-           userProfilesptr[i].dose3_type,
-           userProfilesptr[i].dose3_loc);
+           "[15] Third Dose Location: %s\n"
+           "[16] Exit\n",
+           userProfilesptr[userIndex].userID,
+           userProfilesptr[userIndex].password,
+           userProfilesptr[userIndex].name,
+           userProfilesptr[userIndex].contact,
+           userProfilesptr[userIndex].address,
+           userProfilesptr[userIndex].sex,
+           userProfilesptr[userIndex].dose1_date,
+           userProfilesptr[userIndex].dose1_type,
+           userProfilesptr[userIndex].dose1_loc,
+           userProfilesptr[userIndex].dose2_date,
+           userProfilesptr[userIndex].dose2_type,
+           userProfilesptr[userIndex].dose2_loc,
+           userProfilesptr[userIndex].dose3_date,
+           userProfilesptr[userIndex].dose3_type,
+           userProfilesptr[userIndex].dose3_loc);
+    // update Users.txt with new details of specific user
+    char target[11];
+    strcpy(target, userProfilesptr[userIndex].userID);
+    char maxline[31];
+    while (fgets(maxline, sizeof(maxline), userfile))
+    {
+      if (strstr(maxline, target))
+      {
+        fseek(userfile, -strlen(maxline), SEEK_CUR);
+        file_reg_User(userProfilesptr, userIndex, userfile);
+      }
+    }
+    //  prompt for next change
+    printf("Edit details of another user? [1/0]: ");
+    scanf("%d", &choice);
+    fflush(stdin);
+  } while (choice != 0);
+  fclose(userfile);
+}
+
+// User Data > [2] View All User Details (calls mng_userEdit)
+int mng_UserView(struct user *userProfilesptr)
+{
+  int i, editchoice;
+  printf("Printing User Details...\n");
+  for (i = 0; i < MAX_USERS; i++)
+  {
+    if (strcmp(userProfilesptr[i].userID, "") == 0)
+    {
+      printf(ANSI_BLUE "Index: %d is empty\n" ANSI_OFF, i);
+    }
+    else
+    {
+      printf(ANSI_BLUE "Index: %d\n" ANSI_OFF, i);
+      printf("User Details:\n"
+             "[1] UserID: %s\n"
+             "[2] Password: %s\n"
+             "[3] Name: %s\n"
+             "[4] Contact: %s\n"
+             "[5] Address: %s\n"
+             "[6] Sex: %s\n"
+             "[7] First Dose Date: %s\n"
+             "[8] First Dose Vaccine: %s\n"
+             "[9] First Dose Location: %s\n"
+             "[10] Second Dose Date: %s\n"
+             "[11] Second Dose Vaccine: %s\n"
+             "[12] Second Dose Location: %s\n"
+             "[13] Third Dose Date: %s\n"
+             "[14] Third Dose Vaccine: %s\n"
+             "[15] Third Dose Location: %s\n",
+             userProfilesptr[i].userID,
+             userProfilesptr[i].password,
+             userProfilesptr[i].name,
+             userProfilesptr[i].contact,
+             userProfilesptr[i].address,
+             userProfilesptr[i].sex,
+             userProfilesptr[i].dose1_date,
+             userProfilesptr[i].dose1_type,
+             userProfilesptr[i].dose1_loc,
+             userProfilesptr[i].dose2_date,
+             userProfilesptr[i].dose2_type,
+             userProfilesptr[i].dose2_loc,
+             userProfilesptr[i].dose3_date,
+             userProfilesptr[i].dose3_type,
+             userProfilesptr[i].dose3_loc);
+    }
   }
-  printf("End of User Database\n");
+  printf(ANSI_RED "End of User Database\n" ANSI_OFF);
   printf("Edit user details? [1/0]: ");
   scanf("%d", &editchoice);
   if (editchoice == 1)
@@ -1170,154 +1298,409 @@ void mng_Appt_Add(struct user *userProfilesptr)
   } while (choice != 0);
 }
 
-// Appt Data > [2] View all appointments
-void mng_Appt_View(struct user *userProfilesptr, int apptIndex)
+// Appt Data > [3] Edit appointment details
+int mng_Appt_Edit(struct user *userProfilesptr)
 {
-  int i, j;
-  printf("Appointment ID List\n\n");
+  int choice, apptExists, apptIndex, detail, userIndex;
+  char tempid[11];
+  FILE *apptfile = fopen("Appointment.txt", "r+");
+
+  // check if file exists
+  if (apptfile == NULL)
+  {
+    printf("Error! File not found\n");
+    exit(1);
+  }
+
+  // begin edit
+  do // choice
+  {
+    do // apptExists
+    {
+      fflush(stdin);
+      printf("Enter appointment ID to edit: ");
+      fgets(tempid, sizeof(tempid), stdin);
+      tempid[strcspn(tempid, "\n")] = '\0';
+
+      // check if appointment exists
+      apptExists = checkAID(userProfilesptr, tempid);
+      if (apptExists == 0)
+      {
+        printf("Appointment does not exist!\n");
+        return 0;
+      }
+    } while (apptExists == 0);
+
+    // get appointment index
+    userIndex = checkAIDUserIndex(userProfilesptr, tempid);
+    apptIndex = checkAIDIndex(userProfilesptr, userIndex);
+    printf(ANSI_GREEN "Appointment ID found at profile index %d index %d.\n\n" ANSI_OFF, userIndex, apptIndex);
+
+    // display all details of appointment
+    printf("Appointment Details:\n"
+           "[1] Appointment ID: %s\n"
+           "User ID: %s\n"
+           "[2] Date: %s\n"
+           "[3] Time: %s\n"
+           "[4] Vaccine Type: %s\n"
+           "[5] Location: %s\n"
+           "[6] Exit\n",
+           userProfilesptr[userIndex].appdetails[apptIndex].appID,
+           userProfilesptr[userIndex].appdetails[apptIndex].date,
+           userProfilesptr[userIndex].appdetails[apptIndex].time,
+           userProfilesptr[userIndex].appdetails[apptIndex].vaccine,
+           userProfilesptr[userIndex].appdetails[apptIndex].location);
+
+    // choose which one to edit
+    printf("Which detail would you like to edit?: ");
+    scanf("%d", &detail);
+
+    // edit
+    switch (detail)
+    {
+    case 1:
+    {
+      char tempappID[11];
+      char oldappID[11];
+      // keep old id for file
+      strcpy(oldappID, userProfilesptr[userIndex].appdetails[apptIndex].appID);
+      do
+      {
+        printf("OLD ID: %s", oldappID);
+        fflush(stdin);
+        printf("Enter new appointment ID: ");
+        fgets(tempappID, sizeof(tempappID), stdin);
+        tempappID[strcspn(tempappID, "\n")] = '\0';
+
+        // check if appointment id exists
+        if (checkAID(userProfilesptr, tempappID) == 1)
+        {
+          printf(ANSI_RED "Error: Appointment ID already exists!\n" ANSI_OFF);
+        }
+
+      } while (checkAID(userProfilesptr, tempappID) == 1);
+
+      // assign new id
+      strcpy(userProfilesptr[userIndex].appdetails[apptIndex].appID, tempappID);
+      printf("New Appointment ID: %s", userProfilesptr[userIndex].appdetails[apptIndex].appID);
+      break;
+    }
+    case 2: // edit date
+    {
+      memset(userProfilesptr[userIndex].appdetails[apptIndex].date, 0, sizeof(userProfilesptr[userIndex].appdetails[apptIndex].date));
+      fflush(stdin);
+      printf("Enter date of appointment" ANSI_BLUE " [YYYY-MM-DD]: " ANSI_OFF);
+      fgets(userProfilesptr[userIndex].appdetails[apptIndex].date, sizeof(userProfilesptr[userIndex].appdetails[apptIndex].date), stdin);
+      userProfilesptr[userIndex].appdetails[apptIndex].date[strcspn(userProfilesptr[userIndex].appdetails[apptIndex].date, "\n")] = '\0';
+      printf("New date: %s", userProfilesptr[userIndex].appdetails[apptIndex].date);
+      break;
+    }
+    case 3: // edit time
+    {
+      memset(userProfilesptr[userIndex].appdetails[apptIndex].time, 0, sizeof(userProfilesptr[userIndex].appdetails[apptIndex].time));
+      fflush(stdin);
+      printf("Enter time of appointment" ANSI_BLUE " [HH:MM]: " ANSI_OFF);
+      fgets(userProfilesptr[userIndex].appdetails[apptIndex].time, sizeof(userProfilesptr[userIndex].appdetails[apptIndex].time), stdin);
+      userProfilesptr[userIndex].appdetails[apptIndex].time[strcspn(userProfilesptr[userIndex].appdetails[apptIndex].time, "\n")] = '\0';
+      printf("New time: %s", userProfilesptr[userIndex].appdetails[apptIndex].time);
+      break;
+    }
+    case 4: // edit vaccine
+    {
+      memset(userProfilesptr[userIndex].appdetails[apptIndex].vaccine, 0, sizeof(userProfilesptr[userIndex].appdetails[apptIndex].vaccine));
+      fflush(stdin);
+      printf("Enter type of vaccine brand: " ANSI_BLUE "[Sinovac/Moderna]: " ANSI_OFF);
+      fgets(userProfilesptr[userIndex].appdetails[apptIndex].vaccine, sizeof(userProfilesptr[userIndex].appdetails[apptIndex].vaccine), stdin);
+      userProfilesptr[userIndex].appdetails[apptIndex].vaccine[strcspn(userProfilesptr[userIndex].appdetails[apptIndex].vaccine, "\n")] = '\0';
+      printf("New vaccine: %s", userProfilesptr[userIndex].appdetails[apptIndex].vaccine);
+      break;
+    }
+    case 5: // edit location
+    {
+      memset(userProfilesptr[userIndex].appdetails[apptIndex].location, 0, sizeof(userProfilesptr[userIndex].appdetails[apptIndex].location));
+      fflush(stdin);
+      printf("Enter location of appointment:" ANSI_OFF);
+      fgets(userProfilesptr[userIndex].appdetails[apptIndex].location, sizeof(userProfilesptr[userIndex].appdetails[apptIndex].location), stdin);
+      userProfilesptr[userIndex].appdetails[apptIndex].location[strcspn(userProfilesptr[userIndex].appdetails[apptIndex].location, "\n")] = '\0';
+      printf("New location: %s", userProfilesptr[userIndex].appdetails[apptIndex].location);
+      break;
+    }
+    case 6:
+    {
+      break;
+    }
+    } // end switch
+    // display all details
+    printf("Updated User Details:\n"
+           "[1] Appointment ID: %s\n"
+           "User ID: %s\n"
+           "[2] Date: %s\n"
+           "[3] Time: %s\n"
+           "[4] Vaccine: %s\n"
+           "[5] Location: %s\n",
+           userProfilesptr[userIndex].appdetails[apptIndex].appID,
+           userProfilesptr[userIndex].userID,
+           userProfilesptr[userIndex].appdetails[apptIndex].date,
+           userProfilesptr[userIndex].appdetails[apptIndex].time,
+           userProfilesptr[userIndex].appdetails[apptIndex].vaccine,
+           userProfilesptr[userIndex].appdetails[apptIndex].location);
+
+    // update Appointment.txt with new details
+    char target[11];
+    strcpy(target, userProfilesptr[userIndex].appdetails[apptIndex].appID);
+    char maxline[21];
+    while (fgets(maxline, sizeof(maxline), apptfile))
+    {
+      if (strstr(maxline, target))
+      {
+        fseek(apptfile, -strlen(maxline), SEEK_CUR);
+        file_reg_Appt(userProfilesptr, userIndex, apptfile, apptIndex);
+      }
+      // prompt for next change
+      printf("Edit another appointment? [1/0]: ");
+      scanf("%d", &choice);
+      fflush(stdin);
+    }
+
+  } while (choice != 0);
+
+  // update Appointment.txt with new details
+
+  fclose(apptfile);
+}
+
+// Appt Data > [2] View all appointments (calls mng_Appt_Edit)
+int mng_Appt_View(struct user *userProfilesptr)
+{
+  int i, j, editchoice;
+  printf("Printing Appointment Details...\n");
+
   for (i = 0; i < MAX_APPOINTMENTS; i++)
     for (j = 0; j < MAX_APPOINTMENTS; j++)
     {
-      printf("User ID: %d\n", userProfilesptr[i].userID);
-      printf("User Appointment ID: %d\n", userProfilesptr[i].appdetails[apptIndex].appID);
-      printf("User name: %s", userProfilesptr[i].name);
-      printf("User Appointment Date: %s\n", userProfilesptr[i].appdetails[apptIndex].date);
-      printf("User Appointment Time: %s\n", userProfilesptr[i].appdetails[apptIndex].time);
-      printf("User Appointment Location: %s\n", userProfilesptr[i].appdetails[apptIndex].location);
-      printf("User Appointment Vaccine Type: %s\n", userProfilesptr[i].appdetails[apptIndex].vaccine);
-      printf("User Appointment Dose Number: %s\n", userProfilesptr[i].appdetails[apptIndex].dose);
+      if (strcmp(userProfilesptr[i].appdetails[j].appID, "") == 0)
+      {
+        printf(ANSI_BLUE "Index: %d Appointment %d is empty\n" ANSI_OFF, i, j);
+      }
+      else
+      {
+        printf(ANSI_BLUE " Profile %d Appointment Index: %d\n" ANSI_OFF, i, j);
+        printf("[1] User ID: %s\n", userProfilesptr[i].userID);
+        printf("User Appointment ID: %s\n", userProfilesptr[i].appdetails[j].appID);
+        printf("User name: %s", userProfilesptr[i].name);
+        printf("User Appointment Date: %s\n", userProfilesptr[i].appdetails[j].date);
+        printf("User Appointment Time: %s\n", userProfilesptr[i].appdetails[j].time);
+        printf("User Appointment Location: %s\n", userProfilesptr[i].appdetails[j].location);
+        printf("User Appointment Vaccine Type: %s\n", userProfilesptr[i].appdetails[j].vaccine);
+        printf("User Appointment Dose Number: %s\n", userProfilesptr[i].appdetails[j].dose);
+      }
     }
+
+  printf(ANSI_RED "End of Appointment Database\n" ANSI_OFF);
+  printf("Edit Appointment details? [1/0]: ");
+  scanf("%d", &editchoice);
+  if (editchoice == 1)
+  {
+    mng_Appt_Edit(userProfilesptr);
+  }
+  else if (editchoice == 0)
+  {
+    return 0;
+  }
 }
 
-// Appt Data > [3] Edit appointment details
-/* void mng_Appt_Edit(struct user *userProfilesptr)
-{
-  int userIndex, tempID, tempAID, validAID;
-  int choice;
-
-  printf("Enter user ID to add appointment to: ");
-  scanf("%d", &tempID);
-  userIndex = mng_userFind(userProfilesptr, tempID);
-
-  printf("You are editing an appointment to Profile %d with ID %d\n", userIndex, tempID);
-  printf("Choose which to edit: \n");
-
-  // print out all appt details
-  printf("User Name: %s", userProfilesptr[userIndex].name);
-  printf("[User ID: %d\n", userProfilesptr[userIndex].userID);
-  printf("[1] User Appointment ID: %d\n", userProfilesptr[userIndex].appdetails[apptIndex].appID);
-  printf("[2] User Appointment Date: %s\n", userProfilesptr[userIndex].appdetails[apptIndex].date);
-  printf("[3] User Appointment Time: %s\n", userProfilesptr[userIndex].appdetails[apptIndex].time);
-  printf("[4] User Appointment Location: %s\n", userProfilesptr[userIndex].appdetails[apptIndex].location);
-  printf("[5] User Appointment Vaccine Type: %s\n", userProfilesptr[userIndex].appdetails[apptIndex].vaccine);
-  printf("[6] User Appointment Dose Number: %s\n", userProfilesptr[userIndex].appdetails[apptIndex].dose);
-  scanf("choice: %d", &choice);
-
-  switch (choice)
-  {
-  case 1:
-  {
-    printf("Enter new appointment ID:");
-    scanf("%d", &tempAID);
-    validAID = checkAID(userProfilesptr, tempAID);
-
-    if (validAID > 0)
-    {
-      printf(ANSI_RED "Error: Application ID already exists. Enter a valid appointment ID number.\n" ANSI_OFF);
-    }
-    else
-    {
-      printf(ANSI_GREEN "Success: Application ID available.\n" ANSI_OFF);
-      userProfilesptr[userIndex].appdetails[apptIndex].appID = 0;
-      userProfilesptr[userIndex].appdetails[apptIndex].appID = tempAID;
-    }
-  }
-  case 2:
-  {
-    memset(userProfilesptr[userIndex].appdetails[apptIndex].date, 0, sizeof(userProfilesptr[userIndex].appdetails[apptIndex].date));
-    printf("Enter new appointment date:");
-    scanf("%s", userProfilesptr[userIndex].appdetails[apptIndex].date);
-  }
-  case 3:
-  {
-    memset(userProfilesptr[userIndex].appdetails[apptIndex].time, 0, sizeof(userProfilesptr[userIndex].appdetails[apptIndex].time));
-    printf("Enter new appointment time:");
-    scanf("%s", userProfilesptr[userIndex].appdetails[apptIndex].time);
-  }
-  case 4:
-  {
-    memset(userProfilesptr[userIndex].appdetails[apptIndex].location, 0, sizeof(userProfilesptr[userIndex].appdetails[apptIndex].location));
-    printf("Enter new appointment location:");
-    scanf("%s", userProfilesptr[userIndex].appdetails[apptIndex].location);
-  }
-  case 5:
-  {
-    memset(userProfilesptr[userIndex].appdetails[apptIndex].vaccine, 0, sizeof(userProfilesptr[userIndex].appdetails[apptIndex].vaccine));
-    printf("Enter new appointment vaccine type:");
-    scanf("%s", userProfilesptr[userIndex].appdetails[apptIndex].vaccine);
-  }
-  case 6:
-  {
-    memset(userProfilesptr[userIndex].appdetails[apptIndex].dose, 0, sizeof(userProfilesptr[userIndex].appdetails[apptIndex].dose));
-    printf("Enter new appointment dose (first/second/third):");
-    scanf("%s", userProfilesptr[userIndex].appdetails[apptIndex].dose);
-  }
-  }
-
-  printf("Appointment edited successfully.\n");
-  printf("new appointment details for Profile %d with ID %d\n", userIndex, tempID);
-  printf("User Name: %s", userProfilesptr[userIndex].name);
-  printf("[User ID: %d\n", userProfilesptr[userIndex].userID);
-  printf("[1] User Appointment ID: %d\n", userProfilesptr[userIndex].appdetails[apptIndex].appID);
-  printf("[2] User Appointment Date: %s\n", userProfilesptr[userIndex].appdetails[apptIndex].date);
-  printf("[3] User Appointment Time: %s\n", userProfilesptr[userIndex].appdetails[apptIndex].time);
-  printf("[4] User Appointment Location: %s\n", userProfilesptr[userIndex].appdetails[apptIndex].location);
-  printf("[5] User Appointment Vaccine Type: %s\n", userProfilesptr[userIndex].appdetails[apptIndex].vaccine);
-  printf("[6] User Appointment Dose Number: %d\n", userProfilesptr[userIndex].appdetails[apptIndex].dose);
-} */
-
-// Appt Data > [4] Delete appointment/s
-/* void mng_Appt_Delete(struct user *userProfilesptr, int apptIndex, int userIndex)
-{
-  int apptID, apptIndex = 0, choice, confirmchoice;
-  // struct appointment emptystruct = {0};
-  printf("Enter appointment ID to delete: ");
-  scanf("%d", &apptID);
-  apptIndex = mng_userFind(userProfilesptr, apptID);
-
-  printf("You are deleting appointment ID %d\n", apptID);
-  printf("Confirm deletion? [1] Yes [2] No\n");
-  scanf("%d", &confirmchoice);
-
-  if (confirmchoice == 1)
-  {
-    userProfilesptr[userIndex].appdetails[apptIndex];
-    printf("Appointment deleted successfully.\n");
-  }
-  else
-  {
-    printf("Appointment deletion cancelled.\n");
-  }
-} */
-
-// Appt Data > [5] Return to Data Management
-int mng_Appt_Exit()
+// Appt Data > [4] Delete appointment
+int mng_Appt_Delete(struct user *userProfilesptr)
 {
   return 0;
 }
+
+// Appt Data > [5] Return to Data Management
 
 // 3.3 CHATBOT DATA MENU (in cdg.c)
 // Data Management Menu [Admin]
 int mng_Chat(struct user *userProfilesptr);
 
 // Chatbot Data > [1] Add chatbot data
-int mng_Chat_Add();
-// Chatbot Data > [2] View all chatbot data
-int mng_Chat_View();
+int mng_Chat_Add()
+{
+  FILE *fp = fopen("chatbot.txt", "a");
+  char question[81], answer[81];
+
+  fflush(stdin);
+  printf("Enter question: ");
+  fgets(question, 81, stdin);
+  question[strcspn(question, "\n")] = '\0';
+  fprintf(fp, "\n%s\n", question);
+
+  printf("Enter answer: ");
+  fflush(stdin);
+  fgets(answer, 81, stdin);
+  answer[strcspn(answer, "\n")] = '\0';
+  fprintf(fp, "%s", answer);
+
+  fclose(fp);
+}
+
 // Chatbot Data > [3] Edit chatbot data
-int mng_Chat_Edit();
+// Chatbot Data > [3] Edit chatbot data
+int mng_Chat_Edit()
+{
+  printf("This function still has bugs. Please use the text editor to edit the chatbot.txt file.\n");
+  int choice;
+  FILE *fp = fopen("chatbot.txt", "r+");
+  char question[81], answer[81];
+  int line_number = 0; // Keep track of the current line number
+
+  while (fgets(question, 80, fp) != NULL)
+  {
+    // If the current line is a question (odd numbered line), store it in the question variable
+    if (line_number % 2 == 0)
+    {
+      printf("[%d] Question: %s", line_number, question);
+    }
+    // If the current line is an answer (even numbered line), store it in the answer variable and print it
+    else
+    {
+      printf("[%d] Answer: %s", line_number, question);
+    }
+
+    line_number++; // Increment the line number counter
+  }
+
+  printf("\nEnter the line number of the answer you want to edit: ");
+  scanf("%d", &choice);
+
+  // Move the file pointer to the chosen line number
+  fseek(fp, (choice * 2 - 2) * 81, SEEK_SET);
+
+  // Get the current question and answer
+  fgets(question, 81, fp);
+  fgets(answer, 81, fp);
+
+  // Print the current question and answer
+  printf("Current question: %s\n", question);
+  printf("Current answer: %s\n", answer);
+
+  // Edit the question and answer
+  fflush(stdin);
+  printf("Enter new question: ");
+  fgets(question, 81, stdin);
+  question[strcspn(question, "\n")] = '\0';
+
+  fflush(stdin);
+  printf("Enter new answer: ");
+  fgets(answer, 81, stdin);
+  answer[strcspn(answer, "\n")] = '\0';
+
+  // Move the file pointer back to the chosen line number and overwrite the old data with the new data
+  fseek(fp, (choice * 2 - 2) * 81, SEEK_CUR);
+  fprintf(fp, "%s\n%s\n", question, answer);
+
+  fclose(fp);
+}
+
+// Chatbot Data > [2] View all chatbot data (calls mng_Chat_Edit)
+int mng_Chat_View()
+{
+  int choice;
+  FILE *fp = fopen("chatbot.txt", "r");
+  char question[81], answer[81];
+  int line_number = 0; // Keep track of the current line number
+
+  while (fgets(question, 80, fp) != NULL)
+  {
+    // If the current line is a question (odd numbered line), store it in the question variable
+    if (line_number % 2 == 0)
+    {
+      printf("Question: %s", question);
+    }
+    // If the current line is an answer (even numbered line), store it in the answer variable and print it
+    else
+    {
+      printf("Answer: %s", question);
+    }
+
+    line_number++; // Increment the line number counter
+  }
+
+  fclose(fp);
+
+  printf("\nEdit chatbot data? [1/0]:");
+  scanf("%d", &choice);
+  fflush(stdin);
+  if (choice == 1)
+  {
+    mng_Chat_Edit();
+  }
+  else if (choice == 0)
+  {
+    return 0;
+  }
+}
+
 // Chatbot Data > [4] Delete chatbot data
-int mng_Chat_Delete();
+int mng_Chat_Delete()
+{
+  FILE *fp = fopen("chatbot.txt", "r");
+  FILE *temp = fopen("temp.txt", "w");
+  char question[81], answer[81];
+  int line_amount = 0, line_number = 0, delete_line = 0; // Keep track of the current line number and the one to be deleted
+
+  while (fgets(question, 80, fp) != NULL)
+  {
+    // If the current line is a question (odd numbered line), store it in the question variable
+    if (line_number % 2 == 0)
+    {
+      printf("[%d] Question: %s", line_number, question);
+    }
+    // If the current line is an answer (even numbered line), store it in the answer variable and print it
+    else
+    {
+      printf("[%d] Answer: %s", line_number, question);
+    }
+
+    line_number++; // Increment the line number counter
+  }
+
+  printf("\nHow many line numbers would you want to delete? ");
+  scanf("%d", line_amount);
+
+  for (int i = 0; i < line_amount; i++)
+  {
+    printf("Enter the line number (question - even, answer - odd) you want to delete: ");
+    scanf("%d", &delete_line);
+
+    while (fgets(question, 80, fp) != NULL)
+    {
+      if (line_number == delete_line * 2 - 2)
+      {
+        // Skip the question that needs to be deleted
+        fgets(answer, 80, fp); // Read and discard the corresponding answer line
+      }
+      else if (line_number == delete_line * 2 - 1)
+      {
+        // Skip the answer that needs to be deleted
+        fgets(question, 80, fp); // Read and discard the corresponding question line
+      }
+      else
+      {
+        // Write the remaining lines to the temporary file
+        fputs(question, temp);
+        fputs(answer, temp);
+      }
+    }
+
+    line_number++; // Increment the line number counter
+  }
+
+  fclose(fp);
+  fclose(temp);
+
+  // Replace the original file with the temporary file
+  remove("chatbot.txt");
+  rename("temp.txt", "chatbot.txt");
+}
 
 // 3.4 DATA FILES MENU (in cdg.c)
 int mng_ChoosePort(struct user *userProfilesptr);
@@ -1338,16 +1721,16 @@ void mng_Import(struct user *userProfilesptr)
   }
 
   // Read user profiles from file
-  while (fscanf(fp, "%d %s %s %s %s %s %s %s %s %s %s %s %s",
-                &userProfilesptr[i].userID,
+  while (fscanf(fp, "%s %s\n%s\n%s\n%s\n%s\n%s %s %s\n%s %s %s\n %s %s %s\n",
+                userProfilesptr[i].userID,
                 userProfilesptr[i].password,
                 userProfilesptr[i].name,
-                userProfilesptr[i].contact,
                 userProfilesptr[i].address,
+                userProfilesptr[i].contact,
                 userProfilesptr[i].sex,
-                userProfilesptr[i].dose1_date, userProfilesptr[i].dose1_type, userProfilesptr[i].dose1_loc,
-                userProfilesptr[i].dose2_date, userProfilesptr[i].dose2_type, userProfilesptr[i].dose2_loc,
-                userProfilesptr[i].dose3_date, userProfilesptr[i].dose3_type, userProfilesptr[i].dose3_loc) == 15)
+                userProfilesptr[i].dose1_loc, userProfilesptr[i].dose1_date, userProfilesptr[i].dose1_type,
+                userProfilesptr[i].dose2_loc, userProfilesptr[i].dose2_date, userProfilesptr[i].dose2_type,
+                userProfilesptr[i].dose3_loc, userProfilesptr[i].dose3_date, userProfilesptr[i].dose3_type) == 15)
   {
     i++;
   }
@@ -1360,11 +1743,18 @@ void mng_Import(struct user *userProfilesptr)
 void mng_Export(struct user *userProfilesptr)
 {
   FILE *fp;
-  char filename[100];
+  char filename[30];
   int i;
 
   printf("Enter filename: ");
   scanf("%s", filename);
+
+  while (strlen(filename) > 30)
+  {
+    printf("Filename is too long, shorten it to less than 30: ");
+    scanf("%s", filename);
+  }
+
   fp = fopen(filename, "w");
 
   if (fp == NULL)
@@ -1376,7 +1766,7 @@ void mng_Export(struct user *userProfilesptr)
   // Write user profiles to file
   for (i = 0; i < MAX_USERS; i++)
   {
-    fprintf(fp, "%d %s\n%s\n%s\n%s\n%s\n%s %s %s\n%s %s %s\n%s %s %s\n\n",
+    fprintf(fp, "%s %s\n%s\n%s\n%s\n%s\n%s %s %s\n%s %s %s\n %s %s %s\n",
             userProfilesptr[i].userID,
             userProfilesptr[i].password,
             userProfilesptr[i].name,
@@ -1393,4 +1783,4 @@ void mng_Export(struct user *userProfilesptr)
 }
 
 // 3.5 SAVE AND EXIT
-int mng_SaveExit(struct user *userProfilesptr);
+// int mng_SaveExit(struct user *userProfilesptr);
