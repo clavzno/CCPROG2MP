@@ -34,9 +34,14 @@ e. View Confirmed Appointments
 a. Export  
 b. Import  
 
-[-] **Milestone 5: April 4**  
+[x] **Milestone 5: April 4**  
 
 a. Integrated testing (as a whole, not per function/feature)  
 b. Collect and verify versions of code and documents that will be uploaded  
 c. Recheck MP specs for requirements and upload final MP  
 d. [Optional] Implement bonus features
+
+[x] **MP Submission: April 11**
+
+[x] **MP Demo April 14**
+8:45AM  - 9:00AM

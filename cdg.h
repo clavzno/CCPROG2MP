@@ -547,6 +547,7 @@ void reg_User(struct user *userProfilesptr)
   system("cls");
   printf("User Registration Complete!\n");
   fclose(userfile);
+  fclose(idlist);
 }
 
 // 1.2 Vaccination Appointment Registration (Appt Req)
