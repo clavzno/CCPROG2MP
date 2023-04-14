@@ -13,8 +13,6 @@
 
 /* Added after submission */
 #include <ctype.h>
-#define MAX_QUESTION_LEN 80
-#define MAX_ANSWER_LEN 80
 
 /* TYPEDEFs */
 
@@ -358,7 +356,7 @@ void reg_User(struct user *userProfilesptr)
   printf("User ID: %s\n", userProfilesptr[userIndex].userID);
 
   // save id to id list file
-  fprintf(idlist, "%d\n", userProfilesptr[userIndex].userID);
+  fprintf(idlist, "%s\n", userProfilesptr[userIndex].userID);
 
   // char password[11]
   char tempPass[11];
@@ -678,8 +676,8 @@ void reg_Appt(struct user *userProfilesptr)
 
   // CHECKING / PRINT EVERYTHING
   printf("\nEVERYTHING\n");
-  printf("Appointment ID: %d\n", userProfilesptr[userIndex].appdetails[apptIndex].appID);
-  printf("User ID: %d\n", userProfilesptr[userIndex].userID);
+  printf("Appointment ID: %s\n", userProfilesptr[userIndex].appdetails[apptIndex].appID);
+  printf("User ID: %s\n", userProfilesptr[userIndex].userID);
   printf("Location: %s\n", userProfilesptr[userIndex].appdetails[apptIndex].location);
   printf("Vaccine: %s\n", userProfilesptr[userIndex].appdetails[apptIndex].vaccine);
   printf("Date: %s\n", userProfilesptr[userIndex].appdetails[apptIndex].date);
@@ -762,23 +760,6 @@ void reg_Appt(struct user *userProfilesptr)
 
   fclose(fp);
 } */
-
-int reg_Chat(struct user *userProfilesptr) // check chattest2.c
-{
-  printf("you are in reg_chat\n");
-}
-
-  if (!found)
-  {
-    printf("Sorry, I don't know the answer. Please type another question.\n");
-    fprintf(fp_history, "%s\n", input_question);                                              // write question to file
-    fprintf(fp_history, "Sorry, I don't know the answer. Please type another question.\n\n"); // write unknown answer to file
-  }
-
-  fclose(fp);
-  fclose(fp_history);
-  return 0;
-}
 
 /************************************************************/
 // [3] ADMIN/DATA MANAGEMENT
